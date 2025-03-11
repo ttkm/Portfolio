@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.33.3/build/postprocessing.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-scroll-container>
+    <div class="grid-lines"></div>
+    <div class="noise"></div>
+    <div class="color-overlay"></div>
+
+    <button class="menu-toggle">
+        <div class="menu-toggle__lines">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <nav class="main-nav">
+        <div class="nav-bg"></div>
+        <div class="nav-wrapper">
+            <ul class="nav-links">
+                <li class="nav-item"><a href="#home">HOME</a></li>
+                <li class="nav-item"><a href="#work">WORK</a></li>
+                <li class="nav-item"><a href="#about">ABOUT</a></li>
+                <li class="nav-item"><a href="#contact">CONTACT</a></li>
+            </ul>
+            <div class="nav-footer">
+                <div class="social-links">
+                    <a href="https://github.com/ttkm/">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main data-scroll>
+        <section id="home" class="hero" data-scroll-section>
+            <canvas id="hero-canvas"></canvas>
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="line">TTKM</span>
+                    <span class="line">DEVELOPER</span>
+                </h1>
+                <p class="hero-subtitle">Creating immersive digital experiences with cutting-edge web technologies</p>
+            </div>
+            <div class="hero-footer">
+                <div class="location">BASED ON EARTH</div>
+                <div class="availability">AVAILABLE FOR FREELANCE</div>
+            </div>
+            <div class="scroll-indicator">
+                <span>Explore</span>
+                <div class="scroll-cube">
+                    <div class="scroll-cube-face"></div>
+                    <div class="scroll-cube-face"></div>
+                    <div class="scroll-cube-face"></div>
+                    <div class="scroll-cube-face"></div>
+                    <div class="scroll-cube-face"></div>
+                    <div class="scroll-cube-face"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="work" class="globe-section" data-scroll-section>
+            <div class="section-header">
+                <h2 class="section-title" data-scroll data-scroll-speed="1">GLOBAL PRESENCE</h2>
+                <div class="section-number">01</div>
+            </div>
+            
+            <div class="globe-intro">
+                <p class="globe-tagline">Connecting ideas and technology across the digital landscape</p>
+                <p class="mobile-hint">Touch and drag to rotate the globe. Tap on designs to explore.</p>
+            </div>
+            
+            <div class="globe-container">
+                <canvas id="globe-canvas"></canvas>
+                <div class="globe-overlay">
+                    <div class="style-previews">
+                        <div class="preview-popup minimalist" data-style="minimalist">
+                            <div class="preview-header">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-address">minimalist-design.com</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="minimalist-layout">
+                                    <div class="min-header"></div>
+                                    <div class="min-content">
+                                        <div class="min-title"></div>
+                                        <div class="min-text"></div>
+                                        <div class="min-text"></div>
+                                        <div class="min-button"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-label">Minimalist Design</div>
+                        </div>
+                        
+                        <div class="preview-popup creative" data-style="creative">
+                            <div class="preview-header">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-address">creative-portfolio.com</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="creative-layout">
+                                    <div class="creative-shapes">
+                                        <div class="shape circle"></div>
+                                        <div class="shape square"></div>
+                                        <div class="shape triangle"></div>
+                                    </div>
+                                    <div class="creative-grid">
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-label">Creative Portfolio</div>
+                        </div>
+                        
+                        <div class="preview-popup ecommerce" data-style="ecommerce">
+                            <div class="preview-header">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-address">modern-shop.com</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="ecommerce-layout">
+                                    <div class="ecom-nav"></div>
+                                    <div class="ecom-products">
+                                        <div class="product"></div>
+                                        <div class="product"></div>
+                                        <div class="product"></div>
+                                    </div>
+                                    <div class="ecom-sidebar">
+                                        <div class="cart-item"></div>
+                                        <div class="cart-item"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-label">E-Commerce Design</div>
+                        </div>
+                        
+                        <div class="preview-popup dashboard" data-style="dashboard">
+                            <div class="preview-header">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-address">analytics-dashboard.com</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="dashboard-layout">
+                                    <div class="dash-sidebar"></div>
+                                    <div class="dash-content">
+                                        <div class="dash-header"></div>
+                                        <div class="dash-widgets">
+                                            <div class="widget"></div>
+                                            <div class="widget"></div>
+                                            <div class="widget chart"></div>
+                                            <div class="widget wide"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-label">Dashboard UI</div>
+                        </div>
+                        
+                        <div class="preview-popup germany" data-style="germany">
+                            <div class="preview-header">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="browser-address">friend-portfolio.de</div>
+                            </div>
+                            <div class="preview-content">
+                                <div class="germany-layout">
+                                    <div class="germany-flag">
+                                        <div class="flag-stripe black"></div>
+                                        <div class="flag-stripe red"></div>
+                                        <div class="flag-stripe gold"></div>
+                                    </div>
+                                    <div class="germany-info">
+                                        <div class="germany-title">My Beloved Friend and Mentor</div>
+                                        <div class="germany-text">Friend who inspired my coding journey</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="preview-label">Germany</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="globe-info">
+                <div class="current-location">
+                    <h3 class="location-title">Design Capabilities</h3>
+                    <p class="location-description">Explore various design styles and digital solutions I can create for your next project.</p>
+                </div>
+                <div class="globe-categories">
+                    <div class="category">
+                        <span class="category-label">Web Experiences</span>
+                    </div>
+                    <div class="category">
+                        <span class="category-label">Interactive Art</span>
+                    </div>
+                    <div class="category">
+                        <span class="category-label">Digital Interfaces</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="about" class="about" data-scroll-section>
+            <div class="section-header">
+                <h2 class="section-title" data-scroll data-scroll-speed="1">ABOUT ME</h2>
+                <div class="section-number">02</div>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text" data-scroll data-scroll-speed="2">
+                    <p class="large-text">I create digital experiences that push the boundaries of web technology</p>
+                    <div class="about-description">
+                        <p>With a passion for immersive design, I blend creative coding with advanced web technologies to build unique, engaging, and high-performance websites. My expertise spans front-end development, back-end architecture, database management, and API security ensuring every project is as innovative as it is secure.</p>
+                        <p>Each project is an opportunity to push creative boundaries, explore new possibilities, and deliver seamless, scalable digital solutions.</p>
+                    </div>
+                    <div class="skills-container">
+                        <div class="skill-category">
+                            <h4>FRONT-END</h4>
+                            <div class="skill-list">
+                                <span>React</span>
+                                <span>Three.js</span>
+                                <span>WebGL</span>
+                                <span>JavaScript</span>
+                                <span>CSS/SASS</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h4>BACK-END</h4>
+                            <div class="skill-list">
+                                <span>Node.js</span>
+                                <span>MongoDB</span>
+                                <span>API Security</span>
+                                <span>Express</span>
+                                <span>Authentication</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual" data-scroll data-scroll-speed="1">
+                    <div id="lottie-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact" data-scroll-section>
+            <div class="section-header">
+                <h2 class="section-title" data-scroll data-scroll-speed="1">GET IN TOUCH</h2>
+                <div class="section-number">03</div>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-text" data-scroll data-scroll-speed="2">
+                    <h3 class="contact-heading">Let's create something amazing together</h3>
+                    <div class="contact-links">
+                        <a href="mailto:hello@example.com" class="contact-link" data-magnetic>
+                            <span class="link-label">Email</span>
+                            <span class="link-text">Soon...</span>
+                        </a>
+                        <a href="#" class="contact-link" data-magnetic>
+                            <span class="link-label">GitHub</span>
+                            <span class="link-text">@uvvs</span>
+                        </a>
+                    </div>
+                </div>
+                <form class="contact-form" data-scroll data-scroll-speed="1">
+                    <div class="form-group">
+                        <input type="text" id="name" required>
+                        <label for="name">YOUR NAME</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" required>
+                        <label for="email">YOUR EMAIL</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" required></textarea>
+                        <label for="message">YOUR MESSAGE</label>
+                        <div class="form-line"></div>
+                    </div>
+                    <button type="submit" class="submit-btn" data-magnetic>
+                        <span>SEND MESSAGE</span>
+                        <div class="btn-overlay"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div class="section-indicators">
+        <div class="section-indicator active" data-index="0"></div>
+        <div class="section-indicator" data-index="1"></div>
+        <div class="section-indicator" data-index="2"></div>
+        <div class="section-indicator" data-index="3"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
