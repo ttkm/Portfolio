@@ -9,19 +9,154 @@ const menuToggle = document.querySelector('.menu-toggle');
 const mainNav = document.querySelector('.main-nav');
 const navLinks = document.querySelectorAll('.nav-item a');
 
-menuToggle.addEventListener('click', () => {
+// Set initial viewport height for mobile
+const setViewportHeight = () => {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+};
+
+window.addEventListener('resize', () => {
+    setViewportHeight();
+});
+
+window.addEventListener('orientationchange', () => {
+    setTimeout(setViewportHeight, 100);
+});
+
+setViewportHeight();
+
+const isMobile = () => window.innerWidth <= 768;
+
+function initNavigation() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mainNav = document.querySelector('.main-nav');
+    const navLinks = document.querySelectorAll('.nav-item a');
+    
+    menuToggle?.removeEventListener('click', handleMenuToggle);
+    document.removeEventListener('click', handleClickOutside);
+    document.removeEventListener('keydown', handleEscapeKey);
+    navLinks.forEach(link => link.removeEventListener('click', handleNavClick));
+    
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', handleMenuToggle);
+        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('keydown', handleEscapeKey);
+        navLinks.forEach(link => link.addEventListener('click', handleNavClick));
+    }
+}
+
+function handleMenuToggle(event) {
+    event.stopPropagation();
+    
     menuToggle.classList.toggle('active');
     mainNav.classList.toggle('active');
     document.body.classList.toggle('nav-open');
+    
+    setViewportHeight();
+    
     if (mainNav.classList.contains('active')) {
         document.body.style.overflow = 'hidden';
+        
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 100 * (index + 1));
+        });
+        
+        const navFooter = document.querySelector('.nav-footer');
+        if (navFooter) {
+            navFooter.style.opacity = '0';
+            navFooter.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                navFooter.style.opacity = '1';
+                navFooter.style.transform = 'translateY(0)';
+            }, 500);
+        }
     } else {
         document.body.style.overflow = '';
+        
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.style.opacity = '';
+            item.style.transform = '';
+        });
+        
+        const navFooter = document.querySelector('.nav-footer');
+        if (navFooter) {
+            navFooter.style.opacity = '';
+            navFooter.style.transform = '';
+        }
     }
+}
+
+function handleNavClick(event) {
+    event.preventDefault();
+    
+    menuToggle.classList.remove('active');
+    mainNav.classList.remove('active');
+    document.body.classList.remove('nav-open');
+    document.body.style.overflow = '';
+
+    const targetId = event.currentTarget.getAttribute('href');
+    const targetIndex = Array.from(sections).findIndex(section => section.id === targetId.substring(1));
+    
+    if (targetIndex !== -1) {
+        navigateToSection(targetIndex);
+    }
+}
+
+function handleClickOutside(event) {
+    if (mainNav.classList.contains('active') && 
+        !menuToggle.contains(event.target) && 
+        !mainNav.contains(event.target)) {
+        menuToggle.classList.remove('active');
+        mainNav.classList.remove('active');
+        document.body.classList.remove('nav-open');
+        document.body.style.overflow = '';
+    }
+}
+
+function handleEscapeKey(event) {
+    if (event.key === 'Escape' && mainNav.classList.contains('active')) {
+        menuToggle.classList.remove('active');
+        mainNav.classList.remove('active');
+        document.body.classList.remove('nav-open');
+        document.body.style.overflow = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
+    setViewportHeight();
 });
 
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        setViewportHeight();
+        initNavigation();
+    }, 250);
+});
+
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        setViewportHeight();
+        initNavigation();
+    }, 100);
+});
 
 const initFullPageScroll = () => {
+    if (isMobile()) {
+        setupMobileSections();
+        return;
+    }
     
     const sectionElements = document.querySelectorAll('section[data-scroll-section]');
     sectionCount = sectionElements.length;
@@ -67,7 +202,6 @@ const initFullPageScroll = () => {
         }
     }, { passive: true });
     
-    // Handle resize
     const handleResize = () => {
         sections.forEach(section => {
             gsap.set(section, {
@@ -102,6 +236,55 @@ const initFullPageScroll = () => {
             }
         }
     }
+};
+
+const setupMobileSections = () => {
+    const sectionElements = document.querySelectorAll('section[data-scroll-section]');
+    
+    const sectionIndicators = document.querySelector('.section-indicators');
+    if (sectionIndicators) {
+        sectionIndicators.style.display = 'none';
+    }
+    
+    sectionElements.forEach((section) => {
+        gsap.set(section, {
+            position: 'relative',
+            top: 'auto',
+            left: 'auto',
+            width: '100%',
+            height: 'auto',
+            minHeight: '100vh',
+            zIndex: 1,
+            opacity: 1,
+            visibility: 'visible',
+            display: 'block'
+        });
+        
+        sections.push(section);
+    });
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            menuToggle.classList.remove('active');
+            mainNav.classList.remove('active');
+            document.body.classList.remove('nav-open');
+            document.body.style.overflow = '';
+            
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                const offset = 80;
+                const targetPosition = targetSection.offsetTop - offset;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
 };
 
 const createSectionIndicators = () => {
@@ -773,7 +956,7 @@ const animateElementsIn = (section, timeline, direction) => {
 };
 
 navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+    link.removeEventListener('click', (e) => {
         e.preventDefault();
         
         menuToggle.classList.remove('active');
@@ -1106,7 +1289,7 @@ const initCreativeLab = () => {
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(60, containerRect.width / containerRect.height, 0.1, 1000);
-    camera.position.z = 200;
+    camera.position.z = 180;
     
     const renderer = new THREE.WebGLRenderer({ 
         canvas: canvas, 
@@ -1116,11 +1299,11 @@ const initCreativeLab = () => {
     renderer.setSize(containerRect.width, containerRect.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     
-    const earthGeometry = new THREE.SphereGeometry(80, 64, 64);
+    const earthGeometry = new THREE.SphereGeometry(90, 64, 64);
     const earthMaterial = new THREE.MeshPhongMaterial({
         map: new THREE.TextureLoader().load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_atmos_2048.jpg'),
         bumpMap: new THREE.TextureLoader().load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_normal_2048.jpg'),
-        bumpScale: 2,
+        bumpScale: 2.5,
         specularMap: new THREE.TextureLoader().load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_specular_2048.jpg'),
         specular: new THREE.Color(0x333333),
         shininess: 15
@@ -1201,9 +1384,9 @@ const initCreativeLab = () => {
             const phi = (90 - preview.lat) * (Math.PI / 180);
             const theta = (preview.lng + 180) * (Math.PI / 180);
             
-            const x = 80 * Math.sin(phi) * Math.cos(theta);
-            const y = 80 * Math.cos(phi);
-            const z = 80 * Math.sin(phi) * Math.sin(theta);
+            const x = 90 * Math.sin(phi) * Math.cos(theta);
+            const y = 90 * Math.cos(phi);
+            const z = 90 * Math.sin(phi) * Math.sin(theta);
             
             const position = new THREE.Vector3(x, y, z);
             
@@ -1220,28 +1403,28 @@ const initCreativeLab = () => {
             
             if (popup) {
                 if (preview.style === "germany") {
-                    const xOffset = (xPercent - 50) * 0.2 - 5; 
-                    const yOffset = (yPercent - 50) * 0.1 - 10;
+                    const xOffset = (xPercent - 50) * 0.15 - 5;
+                    const yOffset = (yPercent - 50) * 0.08 - 8;
                     
                     popup.style.left = `${xPercent + xOffset}%`;
                     popup.style.top = `${yPercent + yOffset}%`;
                     
                     const visibility = Math.max(0.7, Math.min(1, dot * 2));
                     popup.style.opacity = visibility.toString();
-                    popup.style.transform = `scale(${1.15 + (visibility * 0.1)})`;
+                    popup.style.transform = `scale(${1.1 + (visibility * 0.1)})`;
                     popup.style.pointerEvents = 'auto';
                     popup.classList.add('active');
                     popup.style.zIndex = "10";
                 } else {
                     if (preview.style === "creative") {
-                        const xOffset = (xPercent - 50) * 0.2 + 8; 
-                        const yOffset = (yPercent - 50) * 0.1 + 5;
+                        const xOffset = (xPercent - 50) * 0.15 + 6;
+                        const yOffset = (yPercent - 50) * 0.08 + 4;
                         
                         popup.style.left = `${xPercent + xOffset}%`;
                         popup.style.top = `${yPercent + yOffset}%`;
                     } else {
-                        const xOffset = (xPercent - 50) * 0.2; 
-                        const yOffset = (yPercent - 50) * 0.1;
+                        const xOffset = (xPercent - 50) * 0.15;
+                        const yOffset = (yPercent - 50) * 0.08;
                         
                         popup.style.left = `${xPercent + xOffset}%`;
                         popup.style.top = `${yPercent + yOffset}%`;
@@ -1251,7 +1434,7 @@ const initCreativeLab = () => {
                     
                     if (dot > 0) {
                         popup.style.opacity = visibility.toString();
-                        popup.style.transform = `scale(${0.8 + (visibility * 0.2)}) translateY(${20 - (visibility * 20)}px)`;
+                        popup.style.transform = `scale(${0.85 + (visibility * 0.15)}) translateY(${15 - (visibility * 15)}px)`;
                         popup.style.pointerEvents = 'auto';
                         
                         if (visibility > 0.7) {
@@ -1265,7 +1448,7 @@ const initCreativeLab = () => {
                         popup.style.pointerEvents = 'none';
                     }
                     
-                    const depth = (1 - Math.abs(dot)) * 0.2;
+                    const depth = (1 - Math.abs(dot)) * 0.15;
                     popup.style.zIndex = Math.floor(visibility * 10).toString();
                 }
             }
@@ -1323,7 +1506,6 @@ const initCreativeLab = () => {
                             if (globeInfo) {
                                 globeInfo.classList.add('germany-active');
                                 
-                                // Hide the categories
                                 if (globeCategories) {
                                     globeCategories.style.display = 'none';
                                 }
@@ -1540,7 +1722,6 @@ window.addEventListener('load', () => {
     
     const heroContent = document.querySelector('.hero-content');
     if (heroContent) {
-
         heroContent.style.position = 'relative';
         heroContent.style.left = '0';
         heroContent.style.top = 'auto';
@@ -1567,22 +1748,32 @@ window.addEventListener('load', () => {
     });
 
     initFullPageScroll();
-    initSectionIndicators();
     
-    const sectionIndicators = document.querySelectorAll('.section-indicator');
-    sectionIndicators.forEach(indicator => {
-        indicator.addEventListener('click', () => {
-            const targetIndex = parseInt(indicator.getAttribute('data-index'));
-            
-            updateSectionIndicators(targetIndex);
-            
-            navigateToSection(targetIndex);
+    if (!isMobile()) {
+        initSectionIndicators();
+        
+        const sectionIndicators = document.querySelectorAll('.section-indicator');
+        sectionIndicators.forEach(indicator => {
+            indicator.addEventListener('click', () => {
+                const targetIndex = parseInt(indicator.getAttribute('data-index'));
+                
+                updateSectionIndicators(targetIndex);
+                
+                navigateToSection(targetIndex);
+            });
         });
-    });
+    }
     
     const scrollIndicator = document.querySelector('.scroll-indicator');
     if (scrollIndicator) {
         scrollIndicator.style.opacity = '1';
+    }
+    
+    if (isMobile()) {
+        const workSection = document.getElementById('work');
+        if (workSection) {
+            workSection.style.background = 'linear-gradient(180deg, #000000 0%, var(--color-bg) 50%)';
+        }
     }
 });
 
