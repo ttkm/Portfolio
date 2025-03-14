@@ -1,0 +1,232 @@
+/* Work section (Section 2) */
+#work.globe-section {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, var(--color-bg) 0%, rgba(15,15,15,1) 100%);
+    overflow: hidden;
+    position: relative;
+}
+
+#work .section-header {
+    margin-bottom: 2vh;
+}
+
+.globe-container {
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    min-height: 400px;
+    margin: 2rem 0;
+    overflow: visible;
+    max-width: var(--container-width-lg);
+}
+
+#globe-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    cursor: grab;
+    user-select: none;
+}
+
+#globe-canvas:active {
+    cursor: grabbing;
+}
+
+.globe-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.globe-intro {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: var(--container-width-lg);
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.globe-tagline {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    max-width: 800px;
+    margin: 0 auto 1rem;
+    opacity: 0.9;
+}
+
+.mobile-hint {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    display: none;
+}
+
+.globe-info {
+    position: relative;
+    background: rgba(15, 15, 15, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 3;
+    max-width: 800px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.location-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-accent);
+}
+
+.location-description {
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.globe-categories {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.category {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition-standard);
+}
+
+.category:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.category-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.preview-popup {
+    position: absolute;
+    width: 180px;
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    pointer-events: auto;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.preview-popup:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.preview-popup.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.preview-popup.selected {
+    border: 1px solid var(--color-accent);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    background: rgba(30, 30, 30, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.browser-dots {
+    display: flex;
+    gap: 4px;
+    margin-right: 10px;
+}
+
+.browser-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.browser-dots span:nth-child(1) {
+    background: #ff5f57;
+}
+
+.browser-dots span:nth-child(2) {
+    background: #ffbd2e;
+}
+
+.browser-dots span:nth-child(3) {
+    background: #28ca41;
+}
+
+.browser-address {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-content {
+    padding: 10px;
+    height: 120px;
+}
+
+.preview-label {
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile styles for globe section */
+@media (max-width: 768px) {
+    .mobile-hint {
+        display: block;
+    }
+    
+    .globe-container {
+        height: 40vh;
+        min-height: 300px;
+    }
+    
+    .globe-info {
+        position: relative;
+        padding: 20px;
+        margin-top: 30px;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+    }
+} 

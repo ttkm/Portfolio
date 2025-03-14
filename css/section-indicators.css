@@ -1,0 +1,59 @@
+.section-indicators {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.section-indicators.mobile {
+    right: 10px;
+    gap: 10px;
+    position: fixed;
+    z-index: 900;
+}
+
+.section-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.section-indicators.mobile .section-indicator {
+    width: 10px;
+    height: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.section-indicator.active {
+    background: var(--color-accent, #64ffda);
+    transform: scale(1.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.section-indicator:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.section-indicator.active:hover {
+    background: var(--color-accent, #64ffda);
+}
+
+@media (max-width: 768px) {
+    .section-indicators {
+        right: 10px;
+        z-index: 900;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 5px;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+    }
+} 

@@ -1,7 +1,7 @@
 /* This file is kept as a backup of the original styles.css.
    All styles have been moved to separate CSS files in the css/ directory. */
 
-   :root {
+:root {
     --color-bg: #0f0f0f;
     --color-bg-light: #1a1a1a;
     --color-text: #ffffff;
@@ -374,6 +374,13 @@ section.section.active {
     backface-visibility: hidden;
     border-radius: var(--border-radius);
     overflow: hidden;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition-standard);
+}
+
+.about-visual:hover {
+    box-shadow: var(--box-shadow-hover);
+    transform: translateY(-5px);
 }
 
 #lottie-container {
