@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="css/section-indicators.css">
+    <link rel="stylesheet" href="css/captcha.css">
 </head>
 <body data-scroll-container>
     <div class="grid-lines"></div>
@@ -88,8 +89,7 @@
                     <p class="large-text">I create digital experiences that push the boundaries of web technology</p>
                     <div class="about-description">
                         <p>With a passion for immersive design, I blend creative coding with advanced web technologies to build unique, engaging, and high-performance websites. My expertise spans front-end development, back-end architecture, database management, and API security ensuring every project is as innovative as it is secure.</p>
-                        <p>Each project is an opportunity to push creative boundaries, explore new possibilities, and deliver seamless, scalable digital solutions.</p>
-                        <p>My journey began thanks to my friend <a href="https://github.com/vahrina" style="color: #722F37; text-decoration: none; font-weight: 500;">vahrina</a> from Germany, who introduced me to coding and taught me the fundamentals. She remains a valued mentor and close friend to this day.</p>
+                        <p>My journey began thanks to my friend <a href="https://github.com/vahrina" style="color: #722F37; text-decoration: none; font-weight: 500;">vahrina</a> from Germany, who introduced me to coding and taught me the fundamentals. She remains a valued mentor and friend to this day.</p>
                     </div>
                     <div class="skills-container">
                         <div class="skill-category">
@@ -143,10 +143,9 @@
                 </div>
                 <form class="contact-form" action="https://formsubmit.co/dev@ttkm.net" method="POST" data-scroll data-scroll-speed="1" id="contactForm">
                     <input type="hidden" name="_subject" value="New portfolio contact message">
-                    <input type="hidden" name="_captcha" value="true">
+                    <input type="hidden" name="_captcha" value="false">
                     <input type="hidden" name="_template" value="table">
-                    <input type="hidden" name="_honey" style="display:none">
-                    <input type="hidden" name="_next" value="#contact">
+                    <input type="hidden" name="_next" value="https://ttkm.net/#contact">
                     <input type="hidden" name="_autoresponse" value="Thank you for your message. I'll get back to you as soon as possible.">
                     <div class="form-group">
                         <input type="text" id="name" name="name" required>
@@ -163,11 +162,10 @@
                         <label for="message">YOUR MESSAGE</label>
                         <div class="form-line"></div>
                     </div>
-                    <div class="form-group" style="display:none">
-                        <input type="text" name="website" id="website">
-                        <label for="website">Website</label>
+                    <div class="honeypot-field" style="display:none; position: absolute; left: -9999px;">
+                        <input type="text" name="_honey">
                     </div>
-                    <button type="submit" class="submit-btn" data-magnetic id="submitBtn">
+                    <button type="button" class="submit-btn" data-magnetic id="submitBtn">
                         <span>SEND MESSAGE</span>
                         <div class="btn-overlay"></div>
                     </button>
@@ -186,6 +184,23 @@
         <div class="section-indicator" data-index="2"></div>
     </div>
 
+    <div class="captcha-modal" style="display: none;">
+        <div class="captcha-container">
+            <div class="captcha-header">
+                <h3>Verify you're human</h3>
+                <button type="button" class="close-captcha">&times;</button>
+            </div>
+            <div class="captcha-content">
+                <p>Please solve this simple math problem:</p>
+                <div class="captcha-challenge">
+                    <span id="captchaNum1"></span> + <span id="captchaNum2"></span> = 
+                    <input type="number" id="captchaAnswer" min="0" max="20" inputmode="numeric">
+                </div>
+                <button type="button" id="verifyCaptcha" class="verify-btn">Verify</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/viewport.js"></script>
     <script src="js/particle-system.js"></script>
@@ -197,89 +212,7 @@
     <script src="js/scroll-animations.js"></script>
     <script src="js/fullpage-scroll.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const contactForm = document.getElementById('contactForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const thankYouMessage = document.querySelector('.thank-you-message');
-            const btnText = submitBtn.querySelector('span');
-            
-            if (window.location.hash === '#contact' && sessionStorage.getItem('formSubmitted')) {
-                Array.from(contactForm.querySelectorAll('.form-group, button')).forEach(el => {
-                    el.style.display = 'none';
-                });
-                thankYouMessage.style.display = 'block';
-                sessionStorage.removeItem('formSubmitted');
-                
-                setTimeout(() => {
-                    location.hash = '';
-                    location.reload();
-                }, 3600000);
-            }
-            
-            const submissionTimestamp = localStorage.getItem('lastFormSubmission');
-            const currentTime = new Date().getTime();
-            const cooldownPeriod = 60000;
-            
-            if (submissionTimestamp && (currentTime - parseInt(submissionTimestamp)) < cooldownPeriod) {
-                submitBtn.disabled = true;
-                btnText.textContent = 'PLEASE WAIT...';
-                
-                const remainingTime = Math.ceil((parseInt(submissionTimestamp) + cooldownPeriod - currentTime) / 1000);
-                alert(`Please wait ${remainingTime} seconds before submitting again.`);
-                
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    btnText.textContent = 'SEND MESSAGE';
-                }, parseInt(submissionTimestamp) + cooldownPeriod - currentTime);
-            }
-            
-            contactForm.addEventListener('submit', function(e) {
-                const nameField = document.getElementById('name');
-                const messageField = document.getElementById('message');
-                const websiteField = document.getElementById('website');
-                
-                if (websiteField.value !== '') {
-                    e.preventDefault();
-                    return false;
-                }
-                
-                const suspiciousPatterns = [
-                    /\[url=/i, 
-                    /\[link=/i,
-                    /http:\/\//i,
-                    /https:\/\//i,
-                    /viagra/i,
-                    /casino/i,
-                    /loan/i
-                ];
-                
-                const messageText = messageField.value.toLowerCase();
-                const nameText = nameField.value.toLowerCase();
-                
-                for (const pattern of suspiciousPatterns) {
-                    if (pattern.test(messageText) || pattern.test(nameText)) {
-                        e.preventDefault();
-                        alert('Your message contains content that appears to be spam. Please revise and try again.');
-                        return false;
-                    }
-                }
-                
-                const linkCount = (messageText.match(/http/g) || []).length;
-                if (linkCount > 2) {
-                    e.preventDefault();
-                    alert('Too many links detected. Please limit the number of links in your message.');
-                    return false;
-                }
-                
-                btnText.textContent = 'SENDING...';
-                submitBtn.disabled = true;
-                
-                sessionStorage.setItem('formSubmitted', 'true');
-                localStorage.setItem('lastFormSubmission', currentTime.toString());
-            });
-        });
-    </script>
+    <script src="js/captcha.js"></script>
 </body>
 </html>
 
