@@ -241,4 +241,16 @@ document.addEventListener('DOMContentLoaded', function() {
             verifyCaptchaBtn.click();
         }
     });
+    
+    // Function to toggle thank you message preview (only accessible via URL hash)
+    window.toggleThankYouPreview = function() {
+        contactForm.classList.toggle('preview-thank-you');
+    };
+    
+    // Check for preview mode in URL
+    if (window.location.hash === '#preview-thank-you') {
+        setTimeout(() => {
+            toggleThankYouPreview();
+        }, 500);
+    }
 }); 
