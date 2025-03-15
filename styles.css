@@ -711,6 +711,29 @@ section.section.active {
 .submit-btn:hover .btn-overlay {
     transform: translateX(0);
 }
+
+.submit-btn.cooling-down {
+    background: rgba(50, 50, 50, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    transition: none;
+}
+
+.submit-btn.cooling-down:hover {
+    background: rgba(50, 50, 50, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    transform: none;
+    box-shadow: none;
+}
+
+.submit-btn.cooling-down .btn-overlay {
+    display: none;
+}
+
 .hero {
     position: relative;
     height: 100vh;
