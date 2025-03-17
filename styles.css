@@ -928,17 +928,27 @@ section.section.active {
     html {
         scroll-behavior: smooth;
         scroll-snap-type: none;
+        height: -webkit-fill-available;
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        overflow-x: hidden;
     }
 
     main {
         height: auto !important;
         overflow: visible !important;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
     }
     
     section {
         position: relative !important;
         height: auto !important;
         min-height: 100vh !important;
+        min-height: -webkit-fill-available !important;
         opacity: 1 !important;
         visibility: visible !important;
         padding: 4rem 5% !important;
@@ -946,7 +956,6 @@ section.section.active {
         padding-bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
         padding-left: max(1rem, env(safe-area-inset-left, 1rem));
         padding-right: max(1rem, env(safe-area-inset-right, 1rem));
-        min-height: -webkit-fill-available;
     }
 
     #home.hero {
@@ -959,6 +968,7 @@ section.section.active {
         min-height: 100vh !important;
         padding: 0 !important;
         position: relative !important;
+        overflow: hidden !important;
     }
 
     .hero-content {
@@ -971,10 +981,10 @@ section.section.active {
         max-width: 100% !important;
         margin: 0 auto !important;
         padding: 0 !important;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
         z-index: 2 !important;
     }
 
@@ -1393,7 +1403,6 @@ section.section.active {
     }
 }
 
-/* Thank You Message Styles */
 .thank-you-message {
     background-color: rgba(15, 15, 15, 0.8);
     border: 1px solid rgba(100, 255, 218, 0.3);
@@ -1447,7 +1456,6 @@ section.section.active {
     margin-bottom: 0;
 }
 
-/* Show thank you message for preview */
 .preview-thank-you .thank-you-message {
     display: block !important;
 }
@@ -1456,8 +1464,3 @@ section.section.active {
 .preview-thank-you .submit-btn {
     display: none !important;
 }
-
-
-
-
-
