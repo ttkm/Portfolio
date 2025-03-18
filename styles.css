@@ -19,6 +19,8 @@
     --container-width-sm: 90%;
     --container-width-md: 85%;
     --container-width-lg: 80%;
+    --vh: 1vh;
+    --locked-vh: 100vh;
 }
 
 * {
@@ -53,7 +55,7 @@ body {
     cursor: default;
     opacity: 0;
     transition: opacity 0.5s ease;
-    min-height: 100dvh;
+    min-height: 100vh;
     min-height: -webkit-fill-available;
 }
 
@@ -64,7 +66,7 @@ body.loaded {
 main {
     position: relative;
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
     height: -webkit-fill-available;
     overflow: hidden;
 }
@@ -74,9 +76,9 @@ section {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
     height: -webkit-fill-available;
-    min-height: 100dvh;
+    min-height: 100vh;
     min-height: -webkit-fill-available;
     padding: 5% 5%;
     display: flex;
@@ -204,7 +206,7 @@ section {
     left: 0;
     width: 100%;
     height: 100vh;
-    height: 100dvh;
+    height: var(--locked-vh, 100vh);
     background: rgba(15, 15, 15, 0.98);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -937,6 +939,13 @@ section.section.active {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+    /* These styles handle the URL bar show/hide issue */
+    :root {
+        --mobile-min-height: var(--locked-vh, 100vh);
+        --mobile-section-height: auto;
+        --mobile-hero-height: var(--locked-vh, 100vh);
+    }
+    
     html {
         scroll-behavior: smooth;
         scroll-snap-type: none;
@@ -950,24 +959,21 @@ section.section.active {
     }
 
     main {
+        display: block !important;
         height: auto !important;
         overflow: visible !important;
-        min-height: 100vh;
-        min-height: -webkit-fill-available;
     }
     
-    section {
+    section.section {
+        display: block !important;
         position: relative !important;
+        top: auto !important;
+        left: auto !important;
         height: auto !important;
-        min-height: 100svh !important;
-        min-height: calc(var(--vh, 1vh) * 100) !important;
+        width: 100% !important;
         opacity: 1 !important;
         visibility: visible !important;
-        padding: 4rem 5% !important;
-        padding-top: max(4rem, env(safe-area-inset-top, 4rem));
-        padding-bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
-        padding-left: max(1rem, env(safe-area-inset-left, 1rem));
-        padding-right: max(1rem, env(safe-area-inset-right, 1rem));
+        transform: none !important;
     }
 
     #home.hero {
@@ -976,13 +982,13 @@ section.section.active {
         align-items: center !important;
         justify-content: center !important;
         text-align: center !important;
-        height: 100svh !important;
-        height: calc(var(--vh, 1vh) * 100) !important;
-        min-height: 100svh !important;
-        min-height: calc(var(--vh, 1vh) * 100) !important;
+        height: var(--mobile-hero-height) !important;
+        min-height: var(--mobile-hero-height) !important;
+        max-height: var(--mobile-hero-height) !important;
         padding: 0 !important;
         position: relative !important;
         overflow: hidden !important;
+        z-index: 1 !important;
     }
 
     .hero-content {
@@ -995,10 +1001,10 @@ section.section.active {
         max-width: 100% !important;
         margin: 0 auto !important;
         padding: 0 !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
         z-index: 2 !important;
     }
 
@@ -1051,8 +1057,9 @@ section.section.active {
     }
     
     #about.about {
-        background: linear-gradient(180deg, #000000 0%, var(--color-bg) 70%) !important;
+        margin-top: 0 !important;
         padding-top: 4rem !important;
+        background: linear-gradient(180deg, #000000 0%, var(--color-bg) 70%) !important;
         padding-bottom: 4rem !important;
         text-align: center !important;
     }
@@ -1148,8 +1155,9 @@ section.section.active {
     }
     
     #contact.contact {
-        background: var(--color-bg);
+        margin-top: 0 !important;
         padding-top: 4rem !important;
+        background: var(--color-bg);
         padding-bottom: 4rem !important;
         text-align: center !important;
     }

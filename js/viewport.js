@@ -3,11 +3,43 @@
 const Viewport = (() => {
     let viewportWidth = window.innerWidth;
     let viewportHeight = window.innerHeight;
+    let initialHeight = window.innerHeight;
     let resizeTimer;
     let currentBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
-    let lastHeight = window.innerHeight;
     let isMobile = window.innerWidth <= 768;
     let isScrolling = false;
+    let isInitialLoad = true;
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    const setVhVariable = () => {
+        let vh = viewportHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    
+    const lockViewportHeight = () => {
+        if (isMobileDevice) {
+            // Set locked height
+            document.documentElement.style.setProperty('--locked-vh', `${initialHeight}px`);
+            
+            // Set fixed height on sections to prevent resize on URL bar show/hide
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                if (section.id === 'home') {
+                    section.style.height = `${initialHeight}px`;
+                    section.style.minHeight = `${initialHeight}px`;
+                    section.style.maxHeight = `${initialHeight}px`;
+                } else {
+                    section.style.minHeight = `${initialHeight}px`;
+                }
+            });
+            
+            // Fix navigation height
+            const mainNav = document.querySelector('.main-nav');
+            if (mainNav) {
+                mainNav.style.height = `${initialHeight}px`;
+            }
+        }
+    };
     
     const updateDimensions = () => {
         if (isScrolling) return;
@@ -15,11 +47,27 @@ const Viewport = (() => {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
         
-        // Only update if width changed or height changed significantly (more than 150px)
-        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 150) {
+        // On initial load, set the height and don't update it unless there's a significant change
+        if (isInitialLoad) {
+            viewportHeight = initialHeight;
+            document.documentElement.style.setProperty('--vh', `${viewportHeight * 0.01}px`);
+            document.documentElement.style.setProperty('--viewport-height', `${viewportHeight}px`);
+            document.documentElement.style.setProperty('--locked-vh', `${initialHeight}px`);
+            isInitialLoad = false;
+            lockViewportHeight();
+            return;
+        }
+        
+        // Only update if width changed or height changed significantly (more than 200px)
+        if (newWidth !== viewportWidth || Math.abs(newHeight - initialHeight) > 200) {
             viewportWidth = newWidth;
             viewportHeight = newHeight;
-            lastHeight = newHeight;
+            
+            // Only update initialHeight on significant changes
+            if (Math.abs(newHeight - initialHeight) > 200 || newWidth !== viewportWidth) {
+                initialHeight = newHeight;
+                document.documentElement.style.setProperty('--locked-vh', `${initialHeight}px`);
+            }
             
             let vh = viewportHeight * 0.01;
             let vw = viewportWidth * 0.01;
@@ -40,8 +88,17 @@ const Viewport = (() => {
             const newBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
             const breakpointChanged = currentBreakpoint !== newBreakpoint;
             currentBreakpoint = newBreakpoint;
+            isMobile = newBreakpoint === 'mobile';
             
             adjustContentSizes(breakpointChanged);
+            lockViewportHeight();
+        }
+    };
+    
+    const ignoreUrlBarChanges = () => {
+        // Don't update viewport height during scrolling when URL bar shows/hides
+        if (initialHeight && Math.abs(window.innerHeight - initialHeight) < 150) {
+            document.documentElement.style.setProperty('--vh', `${initialHeight * 0.01}px`);
         }
     };
     
@@ -51,12 +108,13 @@ const Viewport = (() => {
         
         if (heroSection) {
             if (isMobile) {
-                heroSection.style.height = '100dvh';
-                heroSection.style.minHeight = '100dvh';
-                heroSection.style.position = 'fixed';
+                heroSection.style.height = `${initialHeight}px`;
+                heroSection.style.minHeight = `${initialHeight}px`;
+                heroSection.style.position = 'relative';
                 heroSection.style.top = '0';
                 heroSection.style.left = '0';
                 heroSection.style.width = '100%';
+                heroSection.style.zIndex = '1';
             } else {
                 heroSection.style.height = `${viewportHeight}px`;
                 heroSection.style.minHeight = `${viewportHeight}px`;
@@ -145,7 +203,7 @@ const Viewport = (() => {
         if (aboutSection) {
             if (isMobile) {
                 aboutSection.style.height = 'auto';
-                aboutSection.style.minHeight = '100dvh';
+                aboutSection.style.minHeight = `${initialHeight}px`;
                 aboutSection.style.position = 'relative';
                 aboutSection.style.top = 'auto';
                 aboutSection.style.left = 'auto';
@@ -160,7 +218,7 @@ const Viewport = (() => {
             }
             
             if (aboutContent && isMobile) {
-                aboutContent.style.gap = `${viewportHeight * 0.03}px`;
+                aboutContent.style.gap = `${initialHeight * 0.03}px`;
             }
         }
         
@@ -169,7 +227,7 @@ const Viewport = (() => {
         if (contactSection) {
             if (isMobile) {
                 contactSection.style.height = 'auto';
-                contactSection.style.minHeight = '100dvh';
+                contactSection.style.minHeight = `${initialHeight}px`;
                 contactSection.style.position = 'relative';
                 contactSection.style.top = 'auto';
                 contactSection.style.left = 'auto';
@@ -189,7 +247,7 @@ const Viewport = (() => {
                 if (isMobile) {
                     gsap.set(section, {
                         height: 'auto',
-                        minHeight: '100dvh',
+                        minHeight: `${initialHeight}px`,
                         position: 'relative',
                         top: 'auto',
                         left: 'auto',
@@ -209,26 +267,50 @@ const Viewport = (() => {
     };
     
     const init = () => {
+        // Set initial values
+        setVhVariable();
         updateDimensions();
         
+        // Add event listeners
         let scrollTimeout;
         window.addEventListener('scroll', () => {
             isScrolling = true;
             clearTimeout(scrollTimeout);
+            
+            if (isMobileDevice) {
+                ignoreUrlBarChanges();
+            }
+            
             scrollTimeout = setTimeout(() => {
                 isScrolling = false;
-                updateDimensions();
             }, 150);
-        });
+        }, { passive: true });
         
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(updateDimensions, 250);
+            resizeTimer = setTimeout(() => {
+                updateDimensions();
+            }, 250);
         });
         
         window.addEventListener('orientationchange', () => {
-            setTimeout(updateDimensions, 250);
+            setTimeout(() => {
+                initialHeight = window.innerHeight;
+                document.documentElement.style.setProperty('--locked-vh', `${initialHeight}px`);
+                updateDimensions();
+                lockViewportHeight();
+            }, 500);
         });
+        
+        // Force a delay to ensure correct mobile heights are captured
+        if (isMobileDevice) {
+            setTimeout(() => {
+                initialHeight = window.innerHeight;
+                document.documentElement.style.setProperty('--locked-vh', `${initialHeight}px`);
+                updateDimensions();
+                lockViewportHeight();
+            }, 300);
+        }
     };
     
     return {

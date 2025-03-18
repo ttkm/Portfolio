@@ -111,46 +111,38 @@ const resetMobileStyles = () => {
     document.body.offsetHeight;
 };
 
-const enableMobileScrolling = () => {
-    document.body.style.overflow = 'auto';
-    document.documentElement.style.overflow = 'auto';
+function enableMobileScrolling() {
+    console.log('Enabling mobile scrolling');
+    
+    gsap.killTweensOf(window);
+    gsap.killTweensOf(document.body);
+    
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    setTimeout(() => {
-        window.scrollTo(0, 0);
-        
-        document.body.offsetHeight;
-
-        document.querySelectorAll('section.section').forEach(section => {
-            section.style.position = 'relative';
-            section.style.top = 'auto';
-            section.style.left = 'auto';
-            section.style.opacity = '1';
-            section.style.visibility = 'visible';
-            section.style.zIndex = 'auto';
-            
-            const animatedElements = section.querySelectorAll('[data-scroll]');
-            animatedElements.forEach(el => {
-                if (typeof gsap !== 'undefined') {
-                    gsap.killTweensOf(el);
-                    gsap.set(el, { clearProps: 'all' });
-                }
-            });
-        });
-        
-        applyMobileStyles();
-        
-        if (typeof FullpageScroll !== 'undefined') {
-            if (FullpageScroll.resetScroll) {
-                FullpageScroll.resetScroll();
-            }
-            
-            setupMobileHashNavigation();
+    if (typeof FullpageScroll !== 'undefined' && FullpageScroll.getCurrentSection) {
+        const currentSection = document.querySelector(`section:nth-child(${FullpageScroll.getCurrentSection() + 1})`);
+        if (currentSection) {
+            currentSection.classList.add('active');
         }
-        
-        hasInitializedMobile = true;
-    }, 50);
-};
+    }
+    
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        section.style.position = 'relative';
+        section.style.top = 'auto';
+        section.style.left = 'auto';
+        section.style.display = 'block';
+        section.style.opacity = '1';
+        section.style.visibility = 'visible';
+        section.classList.add('active');
+    });
+    
+    setTimeout(() => {
+        setupMobileHashNavigation();
+    }, 300);
+}
 
 const setupMobileHashNavigation = () => {
     document.querySelectorAll('.nav-item a, .section-indicator').forEach(el => {

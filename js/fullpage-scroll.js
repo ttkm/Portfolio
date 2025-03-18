@@ -130,7 +130,7 @@ const FullpageScroll = (() => {
                 visibility: 'visible',
                 zIndex: 'auto',
                 pointerEvents: 'auto',
-                display: 'flex',
+                display: 'block',
                 clearProps: 'transform,transition'
             });
             
@@ -455,43 +455,74 @@ const FullpageScroll = (() => {
     };
     
     const resetScroll = () => {
-        isMobileView = window.innerWidth <= 768;
+        console.log('Resetting scroll');
+        isMobileView = Viewport.isMobile();
         
-        removeAllEventListeners();
+        if (isInitialized) {
+            removeAllEventListeners();
+        }
+        
+        gsap.killTweensOf(window);
+        sections.forEach((section) => {
+            gsap.killTweensOf(section);
+            
+            const animatedElements = section.querySelectorAll('[data-scroll]');
+            animatedElements.forEach(el => {
+                gsap.killTweensOf(el);
+            });
+            
+            const content = section.querySelector('.hero-content, .about-content, .contact-content');
+            if (content) {
+                gsap.killTweensOf(content);
+            }
+        });
         
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
-        document.documentElement.style.scrollBehavior = 'smooth';
         
-        sections.forEach((section) => {
-            gsap.set(section, {
-                clearProps: 'all',
-                position: 'relative',
-                top: 'auto',
-                left: 'auto',
-                width: '100%',
-                height: 'auto',
-                opacity: 1,
-                visibility: 'visible',
-                zIndex: 'auto',
-                pointerEvents: 'auto'
+        if (isMobileView) {
+            setupMobileSections();
+            main.style.height = 'auto';
+            main.style.overflow = 'visible';
+            
+            // Fix position and display of sections for mobile
+            sections.forEach((section) => {
+                section.style.position = 'relative';
+                section.style.top = 'auto';
+                section.style.left = 'auto';
+                section.style.width = '100%';
+                section.style.height = 'auto';
+                section.style.opacity = '1';
+                section.style.visibility = 'visible';
+                section.style.display = 'block';
+                section.style.zIndex = 'auto';
+                section.classList.add('active');
             });
             
-            gsap.killTweensOf(section);
+            const aboutSection = document.querySelector('#about');
+            if (aboutSection) {
+                aboutSection.style.marginTop = '0';
+            }
             
-            section.classList.add('active');
+            // Show all sections
+            document.body.style.height = 'auto';
+            document.body.style.overflow = 'visible';
             
-            const animatedElements = section.querySelectorAll('[data-scroll], .fade-up, .hero-content, .about-content, .contact-content');
-            animatedElements.forEach(el => {
-                gsap.killTweensOf(el);
-                gsap.set(el, { clearProps: 'all', opacity: 1, visibility: 'visible' });
+            // Mobile navigation setup
+            setupMobileNavigation();
+        } else {
+            main.style.height = '100vh';
+            main.style.overflow = 'hidden';
+            sections.forEach((section, index) => {
+                section.classList.remove('active');
+                if (index === currentSection) {
+                    section.classList.add('active');
+                }
             });
-        });
+            setupDesktopSections();
+        }
         
-        currentSection = 0;
-        isAnimating = false;
-        
-        setupMobileSections();
+        isInitialized = true;
     };
     
     return {
