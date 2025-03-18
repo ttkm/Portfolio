@@ -112,6 +112,11 @@ const enableMobileScrolling = () => {
     document.documentElement.style.overflow = 'auto';
     document.documentElement.style.scrollBehavior = 'smooth';
     
+    document.body.style.scrollbarWidth = 'none';
+    document.body.style.msOverflowStyle = 'none';
+    document.documentElement.style.scrollbarWidth = 'none';
+    document.documentElement.style.msOverflowStyle = 'none';
+    
     setTimeout(() => {
         window.scrollTo(0, 0);
         
@@ -124,6 +129,8 @@ const enableMobileScrolling = () => {
             section.style.opacity = '1';
             section.style.visibility = 'visible';
             section.style.zIndex = 'auto';
+            section.style.scrollbarWidth = 'none';
+            section.style.msOverflowStyle = 'none';
             
             const animatedElements = section.querySelectorAll('[data-scroll]');
             animatedElements.forEach(el => {
@@ -240,14 +247,32 @@ window.addEventListener('load', () => {
         setupMobileHashNavigation();
         
         const setVhProperty = () => {
-            const vh = window.innerHeight * 0.01;
+            const vh = Math.max(window.innerHeight, document.documentElement.clientHeight, document.body.clientHeight) * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         };
         
         setVhProperty();
         window.addEventListener('resize', setVhProperty);
         window.addEventListener('orientationchange', () => {
+            setVhProperty();
             setTimeout(setVhProperty, 100);
+            setTimeout(setVhProperty, 200);
+        });
+        
+        let scrollThrottleTimer;
+        window.addEventListener('scroll', () => {
+            if (!scrollThrottleTimer) {
+                scrollThrottleTimer = setTimeout(() => {
+                    setVhProperty();
+                    scrollThrottleTimer = null;
+                }, 100);
+            }
+        });
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                setVhProperty();
+            }
         });
     } else {
         resetMobileStyles();

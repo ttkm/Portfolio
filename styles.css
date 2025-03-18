@@ -26,6 +26,8 @@
     padding: 0;
     box-sizing: border-box;
     user-select: none;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
 }
 
 html {
@@ -35,15 +37,39 @@ html {
 html, body {
     margin: 0;
     padding: 0;
-    background: var(--color-bg);
+    box-sizing: border-box;
+    background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
     height: 100%;
-    width: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+@media (max-width: 768px) {
+    main, section, div {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    main::-webkit-scrollbar,
+    section::-webkit-scrollbar,
+    div::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
 }
 
 body {
@@ -975,6 +1001,12 @@ section.section.active {
         padding: 0 !important;
         position: relative !important;
         overflow: hidden !important;
+        box-sizing: border-box !important;
+        transform: translateZ(0) !important;
+        -webkit-transform: translateZ(0) !important;
+        will-change: transform !important;
+        isolation: isolate !important;
+        z-index: 1 !important;
     }
 
     .hero-content {
@@ -1469,7 +1501,71 @@ section.section.active {
     display: none !important;
 }
 
+@supports (-webkit-touch-callout: none) {
+    section {
+        min-height: -webkit-fill-available;
+    }
+    
+    section#home.hero {
+        height: 100vh;
+        height: 100svh;
+        height: calc(var(--vh, 1vh) * 100);
+        min-height: -webkit-fill-available;
+    }
+    
+    .main-nav {
+        height: 100vh;
+        height: 100svh;
+        height: calc(var(--vh, 1vh) * 100);
+    }
+    
+    .full-height {
+        height: calc(var(--vh, 1vh) * 100);
+    }
+}
 
+@supports not (-webkit-touch-callout: none) {
+    section {
+        min-height: 100vh;
+        min-height: 100svh;
+    }
+    
+    section#home.hero {
+        height: 100vh;
+        height: 100svh;
+    }
+    
+    .main-nav {
+        height: 100vh;
+        height: 100svh;
+    }
+    
+    .full-height {
+        height: 100vh;
+        height: 100svh;
+    }
+}
 
+*::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
 
+main[data-scroll],
+body[data-scroll-container] {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
 
+main[data-scroll]::-webkit-scrollbar,
+body[data-scroll-container]::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.c-scrollbar {
+    display: none !important;
+}
