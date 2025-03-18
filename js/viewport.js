@@ -5,32 +5,40 @@ const Viewport = (() => {
     let viewportHeight = window.innerHeight;
     let resizeTimer;
     let currentBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
+    let lastHeight = window.innerHeight;
     
     const updateDimensions = () => {
-        viewportWidth = window.innerWidth;
-        viewportHeight = window.innerHeight;
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
         
-        let vh = viewportHeight * 0.01;
-        let vw = viewportWidth * 0.01;
-        
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        document.documentElement.style.setProperty('--vw', `${vw}px`);
-        document.documentElement.style.setProperty('--viewport-height', `${viewportHeight}px`);
-        document.documentElement.style.setProperty('--viewport-width', `${viewportWidth}px`);
-        
-        if (viewportWidth <= 480) {
-            document.documentElement.style.setProperty('--container-width', 'var(--container-width-sm)');
-        } else if (viewportWidth <= 992) {
-            document.documentElement.style.setProperty('--container-width', 'var(--container-width-md)');
-        } else {
-            document.documentElement.style.setProperty('--container-width', 'var(--container-width-lg)');
+        // Only update if width changed or height changed significantly (more than 50px)
+        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 50) {
+            viewportWidth = newWidth;
+            viewportHeight = newHeight;
+            lastHeight = newHeight;
+            
+            let vh = viewportHeight * 0.01;
+            let vw = viewportWidth * 0.01;
+            
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            document.documentElement.style.setProperty('--vw', `${vw}px`);
+            document.documentElement.style.setProperty('--viewport-height', `${viewportHeight}px`);
+            document.documentElement.style.setProperty('--viewport-width', `${viewportWidth}px`);
+            
+            if (viewportWidth <= 480) {
+                document.documentElement.style.setProperty('--container-width', 'var(--container-width-sm)');
+            } else if (viewportWidth <= 992) {
+                document.documentElement.style.setProperty('--container-width', 'var(--container-width-md)');
+            } else {
+                document.documentElement.style.setProperty('--container-width', 'var(--container-width-lg)');
+            }
+            
+            const newBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
+            const breakpointChanged = currentBreakpoint !== newBreakpoint;
+            currentBreakpoint = newBreakpoint;
+            
+            adjustContentSizes(breakpointChanged);
         }
-        
-        const newBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
-        const breakpointChanged = currentBreakpoint !== newBreakpoint;
-        currentBreakpoint = newBreakpoint;
-        
-        adjustContentSizes(breakpointChanged);
     };
     
     const adjustContentSizes = (breakpointChanged = false) => {
@@ -149,11 +157,11 @@ const Viewport = (() => {
         
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(updateDimensions, 100);
+            resizeTimer = setTimeout(updateDimensions, 250);
         });
         
         window.addEventListener('orientationchange', () => {
-            setTimeout(updateDimensions, 100);
+            setTimeout(updateDimensions, 250);
         });
     };
     

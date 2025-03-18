@@ -67,15 +67,9 @@ const FullpageScroll = (() => {
     const setupDesktopSections = () => {
         console.log('Setting up desktop fullpage scroll');
         
-        // Lock the scroll for desktop and hide scrollbar
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
-        document.body.style.scrollbarWidth = 'none'; 
-        document.documentElement.style.scrollbarWidth = 'none';
-        document.body.style.msOverflowStyle = 'none';
-        document.documentElement.style.msOverflowStyle = 'none';
         
-        // Set positioning for desktop fullpage scroll
         sections.forEach((section, index) => {
             gsap.set(section, {
                 position: 'absolute',
@@ -83,12 +77,12 @@ const FullpageScroll = (() => {
                 left: 0,
                 width: '100%',
                 height: '100vh',
+                minHeight: '100vh',
                 opacity: index === currentSection ? 1 : 0,
                 visibility: index === currentSection ? 'visible' : 'hidden',
                 zIndex: index === currentSection ? 2 : 1,
                 pointerEvents: index === currentSection ? 'auto' : 'none',
-                display: 'flex',
-                overflow: 'hidden'
+                display: 'flex'
             });
             
             if (index === currentSection) {
@@ -119,16 +113,10 @@ const FullpageScroll = (() => {
     const setupMobileSections = () => {
         console.log('Setting up mobile sections');
         
-        // Reset body scroll for mobile but hide scrollbar
-        document.body.style.overflow = 'auto';
-        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
         document.documentElement.style.scrollBehavior = 'smooth';
-        document.body.style.scrollbarWidth = 'none';
-        document.documentElement.style.scrollbarWidth = 'none';
-        document.body.style.msOverflowStyle = 'none';
-        document.documentElement.style.msOverflowStyle = 'none';
         
-        // Reset all sections to normal flow
         sections.forEach((section) => {
             gsap.set(section, {
                 position: 'relative',
@@ -137,24 +125,14 @@ const FullpageScroll = (() => {
                 width: '100%',
                 height: 'auto',
                 minHeight: '100svh',
+                minHeight: 'calc(var(--vh, 1vh) * 100)',
                 opacity: 1,
                 visibility: 'visible',
                 zIndex: 'auto',
                 pointerEvents: 'auto',
                 display: 'flex',
-                clearProps: 'transform,transition',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
+                clearProps: 'transform,transition'
             });
-            
-            if (section.id === 'home') {
-                gsap.set(section, {
-                    height: 'calc(var(--vh, 1vh) * 100)',
-                    minHeight: '-webkit-fill-available',
-                    overflow: 'hidden',
-                    position: 'relative'
-                });
-            }
             
             const animatedElements = section.querySelectorAll('[data-scroll]');
             animatedElements.forEach(el => {

@@ -30,34 +30,38 @@ document.addEventListener('DOMContentLoaded', () => {
         resizeTimer = setTimeout(() => {
             const currentIsMobile = isMobile();
             const wasDesktopBeforeResize = !wasMobile;
+            const heightChange = Math.abs(window.innerHeight - viewportHeight);
             
-            Viewport.updateDimensions();
-            Navigation.init();
-            
-            if (wasDesktopBeforeResize && currentIsMobile) {
-                console.log('Transitioning from desktop to mobile');
-                if (typeof FullpageScroll !== 'undefined' && FullpageScroll.resetScroll) {
-                    FullpageScroll.resetScroll();
-                }
-                applyMobileStyles();
-                enableMobileScrolling();
-            } else if (wasMobile && !currentIsMobile) {
-                console.log('Transitioning from mobile to desktop');
-                resetMobileStyles();
-                if (typeof FullpageScroll !== 'undefined' && FullpageScroll.init) {
-                    FullpageScroll.init();
-                }
-            } else {
-                if (currentIsMobile) {
+            // Only proceed if width changed or height changed significantly
+            if (window.innerWidth !== viewportWidth || heightChange > 50) {
+                Viewport.updateDimensions();
+                Navigation.init();
+                
+                if (wasDesktopBeforeResize && currentIsMobile) {
+                    console.log('Transitioning from desktop to mobile');
+                    if (typeof FullpageScroll !== 'undefined' && FullpageScroll.resetScroll) {
+                        FullpageScroll.resetScroll();
+                    }
                     applyMobileStyles();
-                } else {
+                    enableMobileScrolling();
+                } else if (wasMobile && !currentIsMobile) {
+                    console.log('Transitioning from mobile to desktop');
+                    resetMobileStyles();
                     if (typeof FullpageScroll !== 'undefined' && FullpageScroll.init) {
                         FullpageScroll.init();
                     }
+                } else {
+                    if (currentIsMobile) {
+                        applyMobileStyles();
+                    } else {
+                        if (typeof FullpageScroll !== 'undefined' && FullpageScroll.init) {
+                            FullpageScroll.init();
+                        }
+                    }
                 }
+                
+                wasMobile = currentIsMobile;
             }
-            
-            wasMobile = currentIsMobile;
         }, 250);
     });
     
@@ -112,11 +116,6 @@ const enableMobileScrolling = () => {
     document.documentElement.style.overflow = 'auto';
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    document.body.style.scrollbarWidth = 'none';
-    document.body.style.msOverflowStyle = 'none';
-    document.documentElement.style.scrollbarWidth = 'none';
-    document.documentElement.style.msOverflowStyle = 'none';
-    
     setTimeout(() => {
         window.scrollTo(0, 0);
         
@@ -129,8 +128,6 @@ const enableMobileScrolling = () => {
             section.style.opacity = '1';
             section.style.visibility = 'visible';
             section.style.zIndex = 'auto';
-            section.style.scrollbarWidth = 'none';
-            section.style.msOverflowStyle = 'none';
             
             const animatedElements = section.querySelectorAll('[data-scroll]');
             animatedElements.forEach(el => {
@@ -247,32 +244,14 @@ window.addEventListener('load', () => {
         setupMobileHashNavigation();
         
         const setVhProperty = () => {
-            const vh = Math.max(window.innerHeight, document.documentElement.clientHeight, document.body.clientHeight) * 0.01;
+            const vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         };
         
         setVhProperty();
         window.addEventListener('resize', setVhProperty);
         window.addEventListener('orientationchange', () => {
-            setVhProperty();
             setTimeout(setVhProperty, 100);
-            setTimeout(setVhProperty, 200);
-        });
-        
-        let scrollThrottleTimer;
-        window.addEventListener('scroll', () => {
-            if (!scrollThrottleTimer) {
-                scrollThrottleTimer = setTimeout(() => {
-                    setVhProperty();
-                    scrollThrottleTimer = null;
-                }, 100);
-            }
-        });
-        
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                setVhProperty();
-            }
         });
     } else {
         resetMobileStyles();
