@@ -196,16 +196,21 @@ section {
     left: 0;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     background: rgba(15, 15, 15, 0.98);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.5s ease;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: opacity, visibility;
 }
 
 .main-nav.active {
@@ -252,7 +257,6 @@ section {
 .nav-item:nth-child(1) { transition-delay: 0.1s; }
 .nav-item:nth-child(2) { transition-delay: 0.2s; }
 .nav-item:nth-child(3) { transition-delay: 0.3s; }
-.nav-item:nth-child(4) { transition-delay: 0.4s; }
 
 .nav-item a {
     font-family: var(--font-heading);
@@ -802,10 +806,10 @@ section.section.active {
 
 .scroll-indicator {
     position: absolute;
-    bottom: 5rem;
+    bottom: max(8rem, calc(env(safe-area-inset-bottom, 0) + 8rem));
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 3;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -947,8 +951,8 @@ section.section.active {
     section {
         position: relative !important;
         height: auto !important;
-        min-height: 100vh !important;
-        min-height: -webkit-fill-available !important;
+        min-height: 100svh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
         opacity: 1 !important;
         visibility: visible !important;
         padding: 4rem 5% !important;
@@ -964,8 +968,10 @@ section.section.active {
         align-items: center !important;
         justify-content: center !important;
         text-align: center !important;
-        height: 100vh !important;
-        min-height: 100vh !important;
+        height: 100svh !important;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        min-height: 100svh !important;
+        min-height: calc(var(--vh, 1vh) * 100) !important;
         padding: 0 !important;
         position: relative !important;
         overflow: hidden !important;
@@ -1036,10 +1042,6 @@ section.section.active {
         visibility: hidden !important;
     }
     
-    #work .section-header {
-        padding-top: 4rem;
-    }
-
     #about.about {
         background: linear-gradient(180deg, #000000 0%, var(--color-bg) 70%) !important;
         padding-top: 4rem !important;
@@ -1403,6 +1405,7 @@ section.section.active {
     }
 }
 
+/* Thank You Message Styles */
 .thank-you-message {
     background-color: rgba(15, 15, 15, 0.8);
     border: 1px solid rgba(100, 255, 218, 0.3);
@@ -1456,6 +1459,7 @@ section.section.active {
     margin-bottom: 0;
 }
 
+/* Show thank you message for preview */
 .preview-thank-you .thank-you-message {
     display: block !important;
 }
@@ -1464,3 +1468,8 @@ section.section.active {
 .preview-thank-you .submit-btn {
     display: none !important;
 }
+
+
+
+
+

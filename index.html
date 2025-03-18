@@ -2,29 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TTKM.NET | Creative Web Developer & Full-Stack Engineer</title>
+    <meta name="description" content="TTKM.NET - Specialized in creating immersive digital experiences with React, Three.js, WebGL, Node.js and modern web technologies. Available for freelance projects.">
+    <meta name="keywords" content="TTKM, TTKM.NET, web developer, frontend developer, full-stack developer, React developer, Three.js expert, WebGL developer, JavaScript developer, Node.js developer, creative developer, interactive websites">
+    <meta name="author" content="TTKM.NET">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ttkm.net/">
+    <meta property="og:title" content="TTKM.NET | Creative Web Developer & Full-Stack Engineer">
+    <meta property="og:description" content="Creating immersive digital experiences with cutting-edge web technologies. Expertise in React, Three.js, WebGL and Node.js">
+    <meta property="og:image" content="https://ttkm.net/images/og-image.jpg">
+    <meta property="og:image:alt" content="TTKM.NET Developer Portfolio Preview">
+    <meta property="og:site_name" content="TTKM.NET">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ttkm.net/">
+    <meta property="twitter:title" content="TTKM.NET | Creative Web Developer & Full-Stack Engineer">
+    <meta property="twitter:description" content="Creating immersive digital experiences with cutting-edge web technologies. Expertise in React, Three.js, WebGL and Node.js">
+    <meta property="twitter:image" content="https://ttkm.net/images/og-image.jpg">
+    <meta property="twitter:image:alt" content="TTKM.NET Developer Portfolio Preview">
+    <meta name="twitter:creator" content="@ttkm">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ttkm.net/">
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='32' height='32'%3E%3Crect width='24' height='24' rx='4' fill='%23121212'/%3E%3Cpath d='M5 7h14v2h-6v8h-2V9H5V7z' fill='%23f0f0f0'/%3E%3Cpath d='M7 16v1h10v-1H7z' fill='%23f0f0f0'/%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" as="style">
+    <link rel="preload" href="styles.css" as="style">
     
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/split-type"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.33.3/build/postprocessing.min.js"></script>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="css/section-indicators.css">
     <link rel="stylesheet" href="css/captcha.css">
+    
+    <!-- Sitemap reference -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 </head>
-<body data-scroll-container>
-    <div class="grid-lines"></div>
-    <div class="noise"></div>
-    <div class="color-overlay"></div>
+<body data-scroll-container itemscope itemtype="https://schema.org/WebPage">
+    <div class="grid-lines" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="color-overlay" aria-hidden="true"></div>
 
     <button class="menu-toggle" aria-label="Toggle Menu">
         <div class="menu-toggle__lines">
@@ -34,38 +62,40 @@
         </div>
     </button>
 
-    <nav class="main-nav">
+    <nav class="main-nav" aria-label="Main Navigation">
         <div class="nav-bg"></div>
         <div class="nav-wrapper">
             <ul class="nav-links">
-                <li class="nav-item"><a href="#home">HOME</a></li>
-                <li class="nav-item"><a href="#work">WORK</a></li>
-                <li class="nav-item"><a href="#about">ABOUT</a></li>
-                <li class="nav-item"><a href="#contact">CONTACT</a></li>
+                <li class="nav-item"><a href="#home" aria-label="Home section">HOME</a></li>
+                <li class="nav-item"><a href="#about" aria-label="About section">ABOUT</a></li>
+                <li class="nav-item"><a href="#contact" aria-label="Contact section">CONTACT</a></li>
             </ul>
             <div class="nav-footer">
                 <div class="social-links">
-                    <a href="https://github.com/ttkm/">GitHub</a>
+                    <a href="https://github.com/ttkm/" aria-label="GitHub Profile" rel="noopener">GitHub</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <main data-scroll>
-        <section id="home" class="hero section active" data-scroll-section>
-            <canvas id="hero-canvas"></canvas>
+        <section id="home" class="hero section active" data-scroll-section itemscope itemtype="https://schema.org/WelcomePage">
+            <canvas id="hero-canvas" aria-hidden="true"></canvas>
             <div class="hero-content">
-                <h1 class="hero-title">
-                    <span class="line">TTKM</span>
+                <h1 class="hero-title" itemprop="headline">
+                    <span class="line">TTKM.NET</span>
                     <span class="line">DEVELOPER</span>
                 </h1>
-                <p class="hero-subtitle">Creating immersive digital experiences with cutting-edge web technologies</p>
+                <p class="hero-subtitle" itemprop="description">Creating immersive digital experiences with cutting-edge web technologies</p>
             </div>
             <div class="hero-footer">
-                <div class="location">BASED ON EARTH</div>
-                <div class="availability">AVAILABLE FOR FREELANCE</div>
+                <div class="location" itemprop="location">BASED ON EARTH</div>
+                <div class="availability" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <meta itemprop="availability" content="https://schema.org/InStock" />
+                    AVAILABLE FOR FREELANCE
+                </div>
             </div>
-            <div class="scroll-indicator">
+            <div class="scroll-indicator" aria-hidden="true">
                 <span>Scroll</span>
                 <div class="scroll-cube">
                     <div class="scroll-cube-face"></div>
@@ -78,23 +108,23 @@
             </div>
         </section>
 
-        <section id="about" class="about section" data-scroll-section>
+        <section id="about" class="about section" data-scroll-section itemscope itemtype="https://schema.org/AboutPage">
             <div class="section-header">
-                <h2 class="section-title" data-scroll data-scroll-speed="1">ABOUT ME</h2>
+                <h2 class="section-title" data-scroll data-scroll-speed="1" itemprop="headline">ABOUT ME</h2>
                 <div class="section-number">01</div>
             </div>
             
             <div class="about-content">
                 <div class="about-text" data-scroll data-scroll-speed="2">
-                    <p class="large-text">I create digital experiences that push the boundaries of web technology</p>
-                    <div class="about-description">
+                    <p class="large-text" itemprop="description">I create digital experiences that push the boundaries of web technology</p>
+                    <div class="about-description" itemprop="mainContentOfPage">
                         <p>With a passion for immersive design, I blend creative coding with advanced web technologies to build unique, engaging, and high-performance websites. My expertise spans front-end development, back-end architecture, database management, and API security ensuring every project is as innovative as it is secure.</p>
-                        <p>My journey began thanks to my friend <a href="https://github.com/vahrina" style="color: #722F37; text-decoration: none; font-weight: 500;">vahrina</a> from Germany, who introduced me to coding and taught me the fundamentals. She remains a valued mentor and friend to this day.</p>
+                        <p>My journey began thanks to my friend <a href="https://github.com/vahrina" style="color: #722F37; text-decoration: none; font-weight: 500;" rel="noopener">vahrina</a> from Germany, who introduced me to coding and taught me the fundamentals. She remains a valued mentor and friend to this day.</p>
                     </div>
                     <div class="skills-container">
                         <div class="skill-category">
                             <h4>FRONT-END</h4>
-                            <div class="skill-list">
+                            <div class="skill-list" itemprop="skills">
                                 <span>React</span>
                                 <span>Three.js</span>
                                 <span>WebGL</span>
@@ -104,7 +134,7 @@
                         </div>
                         <div class="skill-category">
                             <h4>BACK-END</h4>
-                            <div class="skill-list">
+                            <div class="skill-list" itemprop="skills">
                                 <span>Node.js</span>
                                 <span>MongoDB</span>
                                 <span>API Security</span>
@@ -115,57 +145,58 @@
                     </div>
                 </div>
                 <div class="about-visual" data-scroll data-scroll-speed="1">
-                    <div id="lottie-container"></div>
+                    <div id="lottie-container" aria-label="Animated illustration" role="img"></div>
                 </div>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="contact section" data-scroll-section>
+        <section id="contact" class="contact section" data-scroll-section itemscope itemtype="https://schema.org/ContactPage">
             <div class="section-header">
-                <h2 class="section-title" data-scroll data-scroll-speed="1">GET IN TOUCH</h2>
+                <h2 class="section-title" data-scroll data-scroll-speed="1" itemprop="headline">GET IN TOUCH</h2>
                 <div class="section-number">02</div>
             </div>
             
             <div class="contact-content">
                 <div class="contact-text" data-scroll data-scroll-speed="2">
-                    <h3 class="contact-heading">Let's create something amazing together</h3>
+                    <h3 class="contact-heading" itemprop="name">Let's create something amazing together</h3>
                     <div class="contact-links">
-                        <a href="mailto:dev@ttkm.net" class="contact-link" data-magnetic>
+                        <a href="mailto:dev@ttkm.net" class="contact-link" data-magnetic itemprop="email">
                             <span class="link-label">Email</span>
                             <span class="link-text">dev@ttkm.net</span>
                         </a>
-                        <a href="https://github.com/uvvs/" class="contact-link" data-magnetic>
+                        <a href="https://github.com/uvvs/" class="contact-link" data-magnetic itemprop="sameAs" rel="noopener">
                             <span class="link-label">GitHub</span>
                             <span class="link-text">@uvvs</span>
                         </a>
                     </div>
                 </div>
-                <form class="contact-form" action="https://formsubmit.co/dev@ttkm.net" method="POST" data-scroll data-scroll-speed="1" id="contactForm">
+                <form class="contact-form" action="https://formsubmit.co/dev@ttkm.net" method="POST" data-scroll data-scroll-speed="1" id="contactForm" itemprop="potentialAction" itemscope itemtype="https://schema.org/ContactAction">
+                    <meta itemprop="name" content="Contact Form" />
                     <input type="hidden" name="_subject" value="New portfolio contact message">
                     <input type="hidden" name="_captcha" value="false">
                     <input type="hidden" name="_template" value="table">
                     <input type="hidden" name="_next" value="https://ttkm.net/#contact">
                     <input type="hidden" name="_autoresponse" value="Thank you for your message. I'll get back to you as soon as possible.">
                     <div class="form-group">
-                        <input type="text" id="name" name="name" required>
+                        <input type="text" id="name" name="name" required itemprop="name">
                         <label for="name">YOUR NAME</label>
                         <div class="form-line"></div>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" required itemprop="email">
                         <label for="email">YOUR EMAIL</label>
                         <div class="form-line"></div>
                     </div>
                     <div class="form-group">
-                        <textarea id="message" name="message" required></textarea>
+                        <textarea id="message" name="message" required itemprop="description"></textarea>
                         <label for="message">YOUR MESSAGE</label>
                         <div class="form-line"></div>
                     </div>
                     <div class="honeypot-field" style="display:none; position: absolute; left: -9999px;">
                         <input type="text" name="_honey">
                     </div>
-                    <button type="button" class="submit-btn" data-magnetic id="submitBtn">
+                    <button type="button" class="submit-btn" data-magnetic id="submitBtn" itemprop="target">
                         <span>SEND MESSAGE</span>
                         <div class="btn-overlay"></div>
                     </button>
@@ -178,41 +209,187 @@
         </section>
     </main>
 
-    <div class="section-indicators">
-        <div class="section-indicator active" data-index="0"></div>
-        <div class="section-indicator" data-index="1"></div>
-        <div class="section-indicator" data-index="2"></div>
+    <div class="section-indicators" aria-label="Section navigation" role="navigation">
+        <div class="section-indicator active" data-index="0" aria-label="Home section indicator"></div>
+        <div class="section-indicator" data-index="1" aria-label="About section indicator"></div>
+        <div class="section-indicator" data-index="2" aria-label="Contact section indicator"></div>
     </div>
 
     <div class="captcha-modal" style="display: none;">
         <div class="captcha-container">
             <div class="captcha-header">
                 <h3>Verify you're human</h3>
-                <button type="button" class="close-captcha">&times;</button>
+                <button type="button" class="close-captcha" aria-label="Close captcha modal">&times;</button>
             </div>
             <div class="captcha-content">
                 <p>Please solve this simple math problem:</p>
                 <div class="captcha-challenge">
                     <span id="captchaNum1"></span> + <span id="captchaNum2"></span> = 
-                    <input type="number" id="captchaAnswer" min="0" max="20" inputmode="numeric">
+                    <input type="number" id="captchaAnswer" min="0" max="20" inputmode="numeric" aria-label="Captcha answer">
                 </div>
                 <button type="button" id="verifyCaptcha" class="verify-btn">Verify</button>
             </div>
         </div>
     </div>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "TTKM",
+      "url": "https://ttkm.net",
+      "jobTitle": "Web Developer",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "Earth"
+      },
+      "knowsAbout": ["Web Development", "React", "Three.js", "WebGL", "Node.js", "MongoDB", "API Security", "Express", "Authentication", "JavaScript", "CSS", "SASS"],
+      "sameAs": [
+        "https://github.com/ttkm/",
+        "https://github.com/uvvs/"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://ttkm.net/",
+      "name": "TTKM.NET Developer Portfolio",
+      "description": "Portfolio of TTKM.NET, a web developer specializing in immersive digital experiences with React, Three.js, WebGL, and Node.js",
+      "potentialAction": {
+        "@type": "ContactAction",
+        "target": "https://ttkm.net/#contact",
+        "name": "Contact TTKM.NET"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "TTKM.NET Web Development",
+      "url": "https://ttkm.net",
+      "description": "Web development services specializing in immersive digital experiences with React, Three.js, WebGL, and modern web technologies.",
+      "priceRange": "Contact for pricing",
+      "telephone": "+Contact via Email",
+      "email": "dev@ttkm.net",
+      "serviceType": ["Web Development", "Frontend Development", "Web Design", "Interactive Websites"],
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "serviceUrl": "https://ttkm.net/#contact",
+        "servicePhone": "+Contact via Email",
+        "serviceSmsNumber": "+Contact via Email"
+      },
+      "areaServed": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": "0",
+          "longitude": "0"
+        },
+        "geoRadius": "20000 km"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://ttkm.net/#home"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About",
+          "item": "https://ttkm.net/#about"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Contact",
+          "item": "https://ttkm.net/#contact"
+        }
+      ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What services does TTKM.NET offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TTKM.NET offers web development services with expertise in React, Three.js, WebGL, Node.js, MongoDB, and API security, creating immersive digital experiences with cutting-edge technologies."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is TTKM.NET available for freelance work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, TTKM.NET is available for freelance projects. You can get in touch through the contact form on the website."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What technologies does TTKM.NET specialize in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "TTKM.NET specializes in React, Three.js, WebGL, JavaScript, CSS/SASS for frontend development, and Node.js, MongoDB, Express, and API Security for backend development."
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- Scripts -->
-    <script src="js/viewport.js"></script>
-    <script src="js/particle-system.js"></script>
-    <script src="js/hero-animation.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/about-section.js"></script>
-    <script src="js/section-indicators.js"></script>
-    <script src="js/scroll-animations.js"></script>
-    <script src="js/fullpage-scroll.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/captcha.js"></script>
+    <script src="js/viewport.js" defer></script>
+    <script src="js/particle-system.js" defer></script>
+    <script src="js/hero-animation.js" defer></script>
+    <script src="js/navigation.js" defer></script>
+    <script src="js/animations.js" defer></script>
+    <script src="js/about-section.js" defer></script>
+    <script src="js/section-indicators.js" defer></script>
+    <script src="js/scroll-animations.js" defer></script>
+    <script src="js/fullpage-scroll.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/captcha.js" defer></script>
+    
+    <!-- Load critical libraries first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Defer non-critical libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/split-type" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.33.3/build/postprocessing.min.js" defer></script>
+    
+    <script>
+        function setVhVariable() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setVhVariable();
+        
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+    </script>
 </body>
 </html>
 

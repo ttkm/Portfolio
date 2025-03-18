@@ -1,110 +1,164 @@
 // Fullpage scroll module to handle section transitions
 
 const FullpageScroll = (() => {
+    let currentSection = 0;
+    let isAnimating = false;
+    let sections = [];
+    let sectionCount = 0;
+    let isInitialized = false;
+    let isMobileView = window.innerWidth <= 768;
+    
+    let wheelHandler = null;
+    let touchStartHandler = null;
+    let touchMoveHandler = null;
+    let touchEndHandler = null;
+    let keyDownHandler = null;
+    let scrollHandler = null;
+    
     const init = () => {
-        if (Viewport.isMobile()) {
+        isMobileView = window.innerWidth <= 768;
+        
+        sections = Array.from(document.querySelectorAll('section[data-scroll-section]'));
+        sectionCount = sections.length;
+        
+        if (sectionCount === 0) return;
+        
+        removeAllEventListeners();
+        
+        if (isMobileView) {
             setupMobileSections();
-            return;
+        } else {
+            setupDesktopSections();
+        }
+    };
+    
+    const removeAllEventListeners = () => {
+        if (wheelHandler) {
+            document.removeEventListener('wheel', wheelHandler, { passive: false });
+            wheelHandler = null;
         }
         
-        const sectionElements = document.querySelectorAll('section[data-scroll-section]');
-        sectionCount = sectionElements.length;
+        if (touchStartHandler) {
+            document.removeEventListener('touchstart', touchStartHandler);
+            touchStartHandler = null;
+        }
         
-        sections.length = 0;
+        if (touchMoveHandler) {
+            document.removeEventListener('touchmove', touchMoveHandler);
+            touchMoveHandler = null;
+        }
         
-        sectionElements.forEach((section, index) => {
-            sections.push(section);
-            
+        if (touchEndHandler) {
+            document.removeEventListener('touchend', touchEndHandler);
+            touchEndHandler = null;
+        }
+        
+        if (keyDownHandler) {
+            document.removeEventListener('keydown', keyDownHandler);
+            keyDownHandler = null;
+        }
+        
+        if (scrollHandler) {
+            window.removeEventListener('scroll', scrollHandler);
+            scrollHandler = null;
+        }
+    };
+    
+    const setupDesktopSections = () => {
+        console.log('Setting up desktop fullpage scroll');
+        
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        
+        sections.forEach((section, index) => {
             gsap.set(section, {
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100vh',
-                zIndex: index === 0 ? 1 : 0,
-                opacity: index === 0 ? 1 : 0,
-                visibility: index === 0 ? 'visible' : 'hidden'
+                opacity: index === currentSection ? 1 : 0,
+                visibility: index === currentSection ? 'visible' : 'hidden',
+                zIndex: index === currentSection ? 2 : 1,
+                pointerEvents: index === currentSection ? 'auto' : 'none',
+                display: 'flex'
             });
+            
+            if (index === currentSection) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
         });
         
-        if (typeof SectionIndicators !== 'undefined' && SectionIndicators.update) {
-            SectionIndicators.update();
-        }
+        setupDesktopEventHandlers();
         
-        document.removeEventListener('wheel', handleSectionScroll);
-        document.addEventListener('wheel', handleSectionScroll, { passive: false });
+        updateSectionIndicators();
         
-        setupTouchHandling();
-        
-        const handleResize = () => {
-            sections.forEach(section => {
-                gsap.set(section, {
-                    height: window.innerHeight
-                });
-            });
-        };
-        
-        window.addEventListener('resize', handleResize);
-        handleResize();
-        
-        const hash = window.location.hash;
-        if (hash) {
-            const targetSection = document.querySelector(hash);
+        const initialHash = window.location.hash;
+        if (initialHash) {
+            const targetSection = document.querySelector(initialHash);
             if (targetSection) {
                 const targetIndex = sections.indexOf(targetSection);
                 if (targetIndex !== -1 && targetIndex !== currentSection) {
-                    gsap.set(sections[currentSection], {
-                        visibility: 'hidden',
-                        opacity: 0,
-                        zIndex: 0
-                    });
-                    
-                    gsap.set(targetSection, {
-                        visibility: 'visible',
-                        opacity: 1,
-                        zIndex: 1
-                    });
-                    
-                    currentSection = targetIndex;
-                    if (typeof SectionIndicators !== 'undefined' && SectionIndicators.update) {
-                        SectionIndicators.update();
-                    }
+                    navigateToSection(targetIndex, true);
                 }
             }
         }
+        
+        isInitialized = true;
     };
     
     const setupMobileSections = () => {
         console.log('Setting up mobile sections');
-        const sectionElements = document.querySelectorAll('section[data-scroll-section]');
         
-        sections.length = 0;
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.scrollBehavior = 'smooth';
         
-        sectionElements.forEach((section) => {
+        sections.forEach((section) => {
             gsap.set(section, {
                 position: 'relative',
                 top: 'auto',
                 left: 'auto',
                 width: '100%',
                 height: 'auto',
-                minHeight: '100vh',
-                zIndex: 1,
+                minHeight: '100svh',
                 opacity: 1,
                 visibility: 'visible',
-                display: 'block'
+                zIndex: 'auto',
+                pointerEvents: 'auto',
+                display: 'flex',
+                clearProps: 'transform,transition'
             });
             
-            sections.push(section);
+            const animatedElements = section.querySelectorAll('[data-scroll]');
+            animatedElements.forEach(el => {
+                gsap.set(el, {
+                    clearProps: 'all'
+                });
+            });
+            
+            const content = section.querySelector('.hero-content, .about-content, .contact-content');
+            if (content) {
+                gsap.set(content, {
+                    opacity: 1,
+                    visibility: 'visible',
+                    clearProps: 'transform'
+                });
+            }
+            
+            section.classList.add('active');
         });
         
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.scrollBehavior = 'smooth';
+        setupMobileNavigation();
         
-        const hash = window.location.hash;
-        if (hash) {
+        setupMobileScrollDetection();
+        
+        const initialHash = window.location.hash;
+        if (initialHash) {
             setTimeout(() => {
-                const targetSection = document.querySelector(hash);
+                const targetSection = document.querySelector(initialHash);
                 if (targetSection) {
                     const offset = 80;
                     const targetPosition = targetSection.offsetTop - offset;
@@ -117,7 +171,9 @@ const FullpageScroll = (() => {
         } else {
             window.scrollTo(0, 0);
         }
-        
+    };
+    
+    const setupMobileNavigation = () => {
         const navLinks = document.querySelectorAll('.nav-item a');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -140,12 +196,12 @@ const FullpageScroll = (() => {
                     const offset = 80;
                     const targetPosition = targetSection.offsetTop - offset;
                     
-                    requestAnimationFrame(() => {
+                    setTimeout(() => {
                         window.scrollTo({
                             top: targetPosition,
                             behavior: 'smooth'
                         });
-                    });
+                    }, 50);
                 }
             });
         });
@@ -159,227 +215,288 @@ const FullpageScroll = (() => {
                     const offset = 80;
                     const targetPosition = targetSection.offsetTop - offset;
                     
-                    requestAnimationFrame(() => {
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
                     });
                 }
             });
         });
+    };
+    
+    const setupMobileScrollDetection = () => {
+        scrollHandler = () => {
+            if (!isMobileView) return;
+            
+            const viewportMiddle = window.innerHeight / 2;
+            let activeIndex = 0;
+            
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= viewportMiddle && rect.bottom >= viewportMiddle) {
+                    activeIndex = index;
+                }
+            });
+            
+            updateSectionIndicators(activeIndex);
+        };
         
-        if (typeof ScrollAnimations !== 'undefined' && ScrollAnimations.initMobileScrollAnimations) {
-            ScrollAnimations.initMobileScrollAnimations();
-        }
-        
-        let scrollTimeout;
-        window.addEventListener('scroll', () => {
-            if (!scrollTimeout) {
-                scrollTimeout = setTimeout(() => {
-                    if (typeof SectionIndicators !== 'undefined' && SectionIndicators.update) {
-                        const viewportMiddle = window.innerHeight / 2;
-                        let activeIndex = 0;
-                        
-                        sections.forEach((section, index) => {
-                            const rect = section.getBoundingClientRect();
-                            if (rect.top <= viewportMiddle && rect.bottom >= viewportMiddle) {
-                                activeIndex = index;
-                            }
-                        });
-                        
-                        SectionIndicators.update(activeIndex);
-                    }
-                    scrollTimeout = null;
-                }, 100);
+        window.addEventListener('scroll', scrollHandler);
+    };
+    
+    const setupDesktopEventHandlers = () => {
+        wheelHandler = (e) => {
+            if (isMobileView || isAnimating) return;
+            
+            e.preventDefault();
+            
+            if (window.wheelTimeout) {
+                clearTimeout(window.wheelTimeout);
             }
+            
+            const delta = e.deltaY;
+            
+            window.wheelTimeout = setTimeout(() => {
+                if (delta > 0) {
+                    navigateDown();
+                } else {
+                    navigateUp();
+                }
+            }, 50);
+        };
+        
+        document.addEventListener('wheel', wheelHandler, { passive: false });
+        
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        touchStartHandler = (e) => {
+            if (isMobileView || isAnimating) return;
+            touchStartY = e.touches[0].clientY;
+        };
+        
+        touchMoveHandler = (e) => {
+            if (isMobileView || isAnimating) {
+                return;
+            }
+            
+            touchEndY = e.touches[0].clientY;
+            
+            if ((currentSection === 0 && touchEndY > touchStartY) || 
+                (currentSection === sections.length - 1 && touchEndY < touchStartY)) {
+                e.preventDefault();
+            }
+        };
+        
+        touchEndHandler = () => {
+            if (isMobileView || isAnimating) return;
+            
+            const touchDiff = touchStartY - touchEndY;
+            const threshold = 50;
+            
+            if (Math.abs(touchDiff) > threshold) {
+                if (touchDiff > 0) {
+                    navigateDown();
+                } else {
+                    navigateUp();
+                }
+            }
+        };
+        
+        document.addEventListener('touchstart', touchStartHandler, { passive: true });
+        document.addEventListener('touchmove', touchMoveHandler, { passive: false });
+        document.addEventListener('touchend', touchEndHandler, { passive: true });
+        
+        keyDownHandler = (e) => {
+            if (isMobileView || isAnimating) return;
+            
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    navigateDown();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    navigateUp();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    navigateToSection(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    navigateToSection(sectionCount - 1);
+                    break;
+            }
+        };
+        
+        document.addEventListener('keydown', keyDownHandler);
+        
+        const sectionIndicators = document.querySelectorAll('.section-indicator');
+        sectionIndicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                if (isMobileView || isAnimating) return;
+                navigateToSection(index);
+            });
         });
     };
     
-    const handleSectionScroll = (e) => {
-        if (isAnimating) return;
-        
-        e.preventDefault();
-        
-        if (window.scrollTimeout) {
-            clearTimeout(window.scrollTimeout);
+    const navigateUp = () => {
+        if (currentSection > 0) {
+            navigateToSection(currentSection - 1);
         }
-        
-        const minDeltaThreshold = 10;
-        const delta = e.deltaY;
-        
-        if (Math.abs(delta) < minDeltaThreshold) return;
-        
-        window.scrollTimeout = setTimeout(() => {
-            if (delta > 0) {
-                navigateToSection(currentSection + 1);
-            } else {
-                navigateToSection(currentSection - 1);
-            }
-        }, 50);
     };
     
-    const navigateToSection = (targetIndex) => {
-        if (targetIndex < 0 || targetIndex >= sectionCount || targetIndex === currentSection || isAnimating) {
+    const navigateDown = () => {
+        if (currentSection < sectionCount - 1) {
+            navigateToSection(currentSection + 1);
+        }
+    };
+    
+    const navigateToSection = (index, immediate = false) => {
+        if (index < 0 || index >= sectionCount) return;
+        if (index === currentSection && !immediate) return;
+        if (isMobileView) {
+            const targetSection = sections[index];
+            const offset = 80;
+            const targetPosition = targetSection.offsetTop - offset;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
             return;
         }
         
         isAnimating = true;
         
-        if (typeof SectionIndicators !== 'undefined' && SectionIndicators.update) {
-            SectionIndicators.update(targetIndex);
+        const prevSection = sections[currentSection];
+        const nextSection = sections[index];
+        
+        if (nextSection.id) {
+            history.replaceState(null, '', `#${nextSection.id}`);
         }
         
-        if (currentSection === 0 && window.particleSystem && window.particleSystem.fadeOutParticles) {
-            window.particleSystem.fadeOutParticles(0.4);
-        }
-        
-        if (targetIndex === 0 && window.particleSystem && window.particleSystem.resetParticles) {
-            window.particleSystem.resetParticles();
-        }
-        
-        const currentSectionElement = sections[currentSection];
-        const targetSectionElement = sections[targetIndex];
-        
-        gsap.set(targetSectionElement, {
-            visibility: 'visible',
-            display: 'flex',
-            opacity: 0,
-            zIndex: 1,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100vh'
-        });
-        
-        const direction = targetIndex > currentSection ? 'down' : 'up';
-        
-        if (targetIndex === 0) {
-            const heroContent = targetSectionElement.querySelector('.hero-content');
-            const heroTitle = targetSectionElement.querySelector('.hero-title');
-            const heroSubtitle = targetSectionElement.querySelector('.hero-subtitle');
-            const heroFooter = targetSectionElement.querySelector('.hero-footer');
-            const scrollIndicator = targetSectionElement.querySelector('.scroll-indicator');
-            
-            if (heroContent) {
-                gsap.set(heroContent, { 
-                    opacity: 1,
-                    clearProps: "left,top,xPercent,yPercent"
-                });
-            }
-            if (heroTitle) gsap.set(heroTitle, { opacity: 1 });
-            if (heroSubtitle) gsap.set(heroSubtitle, { opacity: 1 });
-            if (heroFooter) gsap.set(heroFooter, { opacity: 1 });
-            if (scrollIndicator) gsap.set(scrollIndicator, { opacity: 1 });
-        } else if (targetIndex === 2) {
-            if (typeof AboutSection !== 'undefined' && AboutSection.ensureVisible) {
-                AboutSection.ensureVisible(targetSectionElement);
-            }
-        }
-        
-        const timeline = gsap.timeline({
-            onComplete: () => {
-                gsap.set(currentSectionElement, {
+        if (immediate) {
+            if (prevSection) {
+                gsap.set(prevSection, {
+                    opacity: 0,
                     visibility: 'hidden',
-                    zIndex: 0
+                    zIndex: 1,
+                    pointerEvents: 'none'
                 });
-                
-                currentSection = targetIndex;
-                isAnimating = false;
-                
-                const targetSection = sections[targetIndex];
-                if (targetSection && targetSection.id) {
-                    history.replaceState(null, null, `#${targetSection.id}`);
+                prevSection.classList.remove('active');
+            }
+            
+            gsap.set(nextSection, {
+                opacity: 1,
+                visibility: 'visible',
+                zIndex: 2,
+                pointerEvents: 'auto'
+            });
+            nextSection.classList.add('active');
+            
+            currentSection = index;
+            isAnimating = false;
+            
+            updateSectionIndicators();
+        } else {
+            gsap.to(prevSection, {
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                onComplete: () => {
+                    gsap.set(prevSection, {
+                        visibility: 'hidden',
+                        zIndex: 1,
+                        pointerEvents: 'none'
+                    });
+                    prevSection.classList.remove('active');
                 }
-                
-                gsap.set(sections[currentSection], {
-                    visibility: 'visible',
-                    display: 'flex',
-                    opacity: 1,
-                    zIndex: 1
-                });
-                
-                if (currentSection === 2) {
-                    if (typeof AboutSection !== 'undefined' && AboutSection.ensureVisible) {
-                        AboutSection.ensureVisible(sections[currentSection]);
+            });
+            
+            gsap.set(nextSection, {
+                visibility: 'visible',
+                zIndex: 2,
+                pointerEvents: 'auto',
+                display: 'flex'
+            });
+            
+            gsap.fromTo(nextSection, 
+                { opacity: 0 },
+                { 
+                    opacity: 1, 
+                    duration: 0.5,
+                    ease: 'power2.in',
+                    onComplete: () => {
+                        nextSection.classList.add('active');
+                        currentSection = index;
+                        isAnimating = false;
+                        updateSectionIndicators();
                     }
                 }
-            }
-        });
-        
-        timeline.to(currentSectionElement, {
-            opacity: 0,
-            duration: 0.3,
-            ease: 'power2.inOut'
-        });
-        
-        timeline.to(targetSectionElement, {
-            opacity: 1,
-            duration: 0.3,
-            ease: 'power2.inOut'
-        }, '-=0.15');
-        
-        if (typeof Animations !== 'undefined') {
-            if (Animations.animateElementsOut) {
-                Animations.animateElementsOut(currentSectionElement, timeline, direction);
-            }
-            if (Animations.animateElementsIn) {
-                Animations.animateElementsIn(targetSectionElement, timeline, direction);
-            }
+            );
         }
+        
+        updateSectionIndicators(index);
     };
     
-    const setupTouchHandling = () => {
-        let touchStartY = 0;
-        let touchEndY = 0;
-        let touchStartTime = 0;
-        let touchEndTime = 0;
-        let isTouching = false;
-        
-        document.addEventListener('touchstart', (e) => {
-            if (isAnimating) return;
-            touchStartY = e.touches[0].clientY;
-            touchStartTime = Date.now();
-            isTouching = true;
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', (e) => {
-            if (!isTouching || isAnimating) return;
-            if (currentSection === 0 && e.touches[0].clientY > touchStartY) {
-                e.preventDefault();
-            } else if (currentSection === sections.length - 1 && e.touches[0].clientY < touchStartY) {
-                e.preventDefault();
+    const updateSectionIndicators = (index = currentSection) => {
+        const indicators = document.querySelectorAll('.section-indicator');
+        indicators.forEach((indicator, i) => {
+            if (i === index) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
             }
-        }, { passive: false });
+        });
+    };
+    
+    const resetScroll = () => {
+        isMobileView = window.innerWidth <= 768;
         
-        document.addEventListener('touchend', (e) => {
-            if (!isTouching || isAnimating) return;
+        removeAllEventListeners();
+        
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.scrollBehavior = 'smooth';
+        
+        sections.forEach((section) => {
+            gsap.set(section, {
+                clearProps: 'all',
+                position: 'relative',
+                top: 'auto',
+                left: 'auto',
+                width: '100%',
+                height: 'auto',
+                opacity: 1,
+                visibility: 'visible',
+                zIndex: 'auto',
+                pointerEvents: 'auto'
+            });
             
-            touchEndY = e.changedTouches[0].clientY;
-            touchEndTime = Date.now();
+            gsap.killTweensOf(section);
             
-            const touchDuration = touchEndTime - touchStartTime;
-            const diff = touchStartY - touchEndY;
-            const velocity = Math.abs(diff) / touchDuration;
+            section.classList.add('active');
             
-            if ((Math.abs(diff) > 50 && touchDuration < 300) || Math.abs(diff) > 100 || velocity > 0.5) {
-                if (diff > 0) {
-                    navigateToSection(currentSection + 1);
-                } else {
-                    navigateToSection(currentSection - 1);
-                }
-            }
-            
-            isTouching = false;
-        }, { passive: true });
+            const animatedElements = section.querySelectorAll('[data-scroll], .fade-up, .hero-content, .about-content, .contact-content');
+            animatedElements.forEach(el => {
+                gsap.killTweensOf(el);
+                gsap.set(el, { clearProps: 'all', opacity: 1, visibility: 'visible' });
+            });
+        });
+        
+        currentSection = 0;
+        isAnimating = false;
+        
+        setupMobileSections();
     };
     
     return {
         init,
+        resetScroll,
         navigateToSection,
-        handleSectionScroll,
-        setupMobileSections,
-        setupTouchHandling
+        navigateUp,
+        navigateDown
     };
 })(); 

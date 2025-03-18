@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Disallow: /captcha.html
+
+Sitemap: https://ttkm.net/sitemap.xml

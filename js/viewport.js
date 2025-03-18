@@ -1,6 +1,11 @@
 // Viewport module to handle screen dimensions and responsive adjustments
 
 const Viewport = (() => {
+    let viewportWidth = window.innerWidth;
+    let viewportHeight = window.innerHeight;
+    let resizeTimer;
+    let currentBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
+    
     const updateDimensions = () => {
         viewportWidth = window.innerWidth;
         viewportHeight = window.innerHeight;
@@ -21,10 +26,14 @@ const Viewport = (() => {
             document.documentElement.style.setProperty('--container-width', 'var(--container-width-lg)');
         }
         
-        adjustContentSizes();
+        const newBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
+        const breakpointChanged = currentBreakpoint !== newBreakpoint;
+        currentBreakpoint = newBreakpoint;
+        
+        adjustContentSizes(breakpointChanged);
     };
     
-    const adjustContentSizes = () => {
+    const adjustContentSizes = (breakpointChanged = false) => {
         const heroSection = document.querySelector('.hero');
         const heroContent = document.querySelector('.hero-content');
         
@@ -67,6 +76,26 @@ const Viewport = (() => {
                     }
                 }
             } else {
+                if (breakpointChanged && heroContent) {
+                    heroContent.removeAttribute('style');
+                    
+                    const heroTitle = heroContent.querySelector('.hero-title');
+                    const heroSubtitle = heroContent.querySelector('.hero-subtitle');
+                    
+                    if (heroTitle) {
+                        heroTitle.removeAttribute('style');
+                        
+                        const lines = heroTitle.querySelectorAll('.line');
+                        lines.forEach(line => {
+                            line.removeAttribute('style');
+                        });
+                    }
+                    
+                    if (heroSubtitle) {
+                        heroSubtitle.removeAttribute('style');
+                    }
+                }
+                
                 if (heroContent) {
                     const titleScale = Math.min(Math.max(viewportWidth / 1200, 0.7), 1.2);
                     const subtitleScale = Math.min(Math.max(viewportWidth / 1200, 0.8), 1.1);
@@ -104,11 +133,13 @@ const Viewport = (() => {
             contactSection.style.height = `${viewportHeight}px`;
         }
         
-        sections.forEach(section => {
-            gsap.set(section, {
-                height: viewportHeight
+        if (typeof sections !== 'undefined' && sections.length) {
+            sections.forEach(section => {
+                gsap.set(section, {
+                    height: viewportHeight
+                });
             });
-        });
+        }
     };
     
     const isMobile = () => viewportWidth <= 768;
