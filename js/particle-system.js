@@ -1,19 +1,26 @@
 // Particle system module for hero section
 
 const ParticleSystem = (() => {
+    let lastWindowWidth = window.innerWidth;
+    let lastWindowHeight = window.innerHeight;
+    let renderer, camera;
+    
     const init = () => {
         const heroCanvas = document.querySelector('#hero-canvas');
         if (!heroCanvas) return null;
         
+        lastWindowWidth = window.innerWidth;
+        lastWindowHeight = window.innerHeight;
+        
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
+        camera = new THREE.PerspectiveCamera(75, lastWindowWidth / lastWindowHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer({
             canvas: heroCanvas,
             antialias: true,
             alpha: true
         });
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(lastWindowWidth, lastWindowHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 1);
 
@@ -61,8 +68,8 @@ const ParticleSystem = (() => {
         let mouseY = 0;
         let targetX = 0;
         let targetY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
+        const windowHalfX = lastWindowWidth / 2;
+        const windowHalfY = lastWindowHeight / 2;
 
         document.addEventListener('mousemove', (event) => {
             mouseX = (event.clientX - windowHalfX);
@@ -121,10 +128,24 @@ const ParticleSystem = (() => {
 
         animate();
 
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const newWidth = window.innerWidth;
+                const newHeight = window.innerHeight;
+                const heightDiff = Math.abs(newHeight - lastWindowHeight);
+                
+                // Only resize if width changed or height changed significantly (more than 150px)
+                if (newWidth !== lastWindowWidth || heightDiff > 150) {
+                    lastWindowWidth = newWidth;
+                    lastWindowHeight = newHeight;
+                    
+                    camera.aspect = lastWindowWidth / lastWindowHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(lastWindowWidth, lastWindowHeight);
+                }
+            }, 250);
         });
 
         return {
