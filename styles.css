@@ -53,9 +53,8 @@ body {
     cursor: default;
     opacity: 0;
     transition: opacity 0.5s ease;
-    min-height: 100vh;
+    min-height: 100dvh;
     min-height: -webkit-fill-available;
-    min-height: calc(var(--vh, 1vh) * 100);
 }
 
 body.loaded {
@@ -65,7 +64,8 @@ body.loaded {
 main {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
     overflow: hidden;
 }
 
@@ -74,8 +74,10 @@ section {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    min-height: 100vh;
+    height: 100dvh;
+    height: -webkit-fill-available;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
     padding: 5% 5%;
     display: flex;
     flex-direction: column;

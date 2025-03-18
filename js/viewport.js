@@ -6,13 +6,13 @@ const Viewport = (() => {
     let resizeTimer;
     let currentBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
     let lastHeight = window.innerHeight;
+    let isMobile = window.innerWidth <= 768;
     
     const updateDimensions = () => {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
         
-        // Only update if width changed or height changed significantly (more than 50px)
-        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 50) {
+        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 100) {
             viewportWidth = newWidth;
             viewportHeight = newHeight;
             lastHeight = newHeight;
@@ -46,9 +46,15 @@ const Viewport = (() => {
         const heroContent = document.querySelector('.hero-content');
         
         if (heroSection) {
-            heroSection.style.height = `${viewportHeight}px`;
+            if (isMobile) {
+                heroSection.style.height = '100dvh';
+                heroSection.style.minHeight = '100dvh';
+            } else {
+                heroSection.style.height = `${viewportHeight}px`;
+                heroSection.style.minHeight = `${viewportHeight}px`;
+            }
             
-            if (isMobile()) {
+            if (isMobile) {
                 if (heroContent) {
                     heroContent.style.transform = 'translate(-50%, -50%)';
                     heroContent.style.position = 'absolute';
@@ -128,9 +134,15 @@ const Viewport = (() => {
         const aboutContent = document.querySelector('.about-content');
         
         if (aboutSection) {
-            aboutSection.style.height = `${viewportHeight}px`;
+            if (isMobile) {
+                aboutSection.style.height = 'auto';
+                aboutSection.style.minHeight = '100dvh';
+            } else {
+                aboutSection.style.height = `${viewportHeight}px`;
+                aboutSection.style.minHeight = `${viewportHeight}px`;
+            }
             
-            if (aboutContent && viewportWidth <= 768) {
+            if (aboutContent && isMobile) {
                 aboutContent.style.gap = `${viewportHeight * 0.03}px`;
             }
         }
@@ -138,19 +150,30 @@ const Viewport = (() => {
         const contactSection = document.querySelector('#contact.contact');
         
         if (contactSection) {
-            contactSection.style.height = `${viewportHeight}px`;
+            if (isMobile) {
+                contactSection.style.height = 'auto';
+                contactSection.style.minHeight = '100dvh';
+            } else {
+                contactSection.style.height = `${viewportHeight}px`;
+                contactSection.style.minHeight = `${viewportHeight}px`;
+            }
         }
         
         if (typeof sections !== 'undefined' && sections.length) {
             sections.forEach(section => {
-                gsap.set(section, {
-                    height: viewportHeight
-                });
+                if (isMobile) {
+                    gsap.set(section, {
+                        height: 'auto',
+                        minHeight: '100dvh'
+                    });
+                } else {
+                    gsap.set(section, {
+                        height: viewportHeight
+                    });
+                }
             });
         }
     };
-    
-    const isMobile = () => viewportWidth <= 768;
     
     const init = () => {
         updateDimensions();
@@ -169,6 +192,6 @@ const Viewport = (() => {
         init,
         updateDimensions,
         adjustContentSizes,
-        isMobile
+        isMobile: () => isMobile
     };
 })(); 
