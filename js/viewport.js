@@ -7,12 +7,16 @@ const Viewport = (() => {
     let currentBreakpoint = viewportWidth <= 768 ? 'mobile' : 'desktop';
     let lastHeight = window.innerHeight;
     let isMobile = window.innerWidth <= 768;
+    let isScrolling = false;
     
     const updateDimensions = () => {
+        if (isScrolling) return;
+        
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
         
-        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 100) {
+        // Only update if width changed or height changed significantly (more than 150px)
+        if (newWidth !== viewportWidth || Math.abs(newHeight - lastHeight) > 150) {
             viewportWidth = newWidth;
             viewportHeight = newHeight;
             lastHeight = newHeight;
@@ -49,9 +53,14 @@ const Viewport = (() => {
             if (isMobile) {
                 heroSection.style.height = '100dvh';
                 heroSection.style.minHeight = '100dvh';
+                heroSection.style.position = 'fixed';
+                heroSection.style.top = '0';
+                heroSection.style.left = '0';
+                heroSection.style.width = '100%';
             } else {
                 heroSection.style.height = `${viewportHeight}px`;
                 heroSection.style.minHeight = `${viewportHeight}px`;
+                heroSection.style.position = 'absolute';
             }
             
             if (isMobile) {
@@ -137,9 +146,17 @@ const Viewport = (() => {
             if (isMobile) {
                 aboutSection.style.height = 'auto';
                 aboutSection.style.minHeight = '100dvh';
+                aboutSection.style.position = 'relative';
+                aboutSection.style.top = 'auto';
+                aboutSection.style.left = 'auto';
+                aboutSection.style.width = '100%';
             } else {
                 aboutSection.style.height = `${viewportHeight}px`;
                 aboutSection.style.minHeight = `${viewportHeight}px`;
+                aboutSection.style.position = 'absolute';
+                aboutSection.style.top = '0';
+                aboutSection.style.left = '0';
+                aboutSection.style.width = '100%';
             }
             
             if (aboutContent && isMobile) {
@@ -153,9 +170,17 @@ const Viewport = (() => {
             if (isMobile) {
                 contactSection.style.height = 'auto';
                 contactSection.style.minHeight = '100dvh';
+                contactSection.style.position = 'relative';
+                contactSection.style.top = 'auto';
+                contactSection.style.left = 'auto';
+                contactSection.style.width = '100%';
             } else {
                 contactSection.style.height = `${viewportHeight}px`;
                 contactSection.style.minHeight = `${viewportHeight}px`;
+                contactSection.style.position = 'absolute';
+                contactSection.style.top = '0';
+                contactSection.style.left = '0';
+                contactSection.style.width = '100%';
             }
         }
         
@@ -164,11 +189,19 @@ const Viewport = (() => {
                 if (isMobile) {
                     gsap.set(section, {
                         height: 'auto',
-                        minHeight: '100dvh'
+                        minHeight: '100dvh',
+                        position: 'relative',
+                        top: 'auto',
+                        left: 'auto',
+                        width: '100%'
                     });
                 } else {
                     gsap.set(section, {
-                        height: viewportHeight
+                        height: viewportHeight,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%'
                     });
                 }
             });
@@ -177,6 +210,16 @@ const Viewport = (() => {
     
     const init = () => {
         updateDimensions();
+        
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+                updateDimensions();
+            }, 150);
+        });
         
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
