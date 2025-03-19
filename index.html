@@ -160,17 +160,17 @@
                 <div class="contact-text" data-scroll data-scroll-speed="2">
                     <h3 class="contact-heading" itemprop="name">Let's create something amazing together</h3>
                     <div class="contact-links">
-                        <a href="mailto:dev@ttkm.net" class="contact-link" data-magnetic itemprop="email">
-                            <span class="link-label">Email</span>
-                            <span class="link-text">dev@ttkm.net</span>
-                        </a>
                         <a href="https://github.com/ttkm/" class="contact-link" data-magnetic itemprop="sameAs" rel="noopener">
                             <span class="link-label">GitHub</span>
                             <span class="link-text">@ttkm</span>
                         </a>
+                        <a href="#" class="contact-link" data-magnetic id="emailLink" itemprop="email">
+                            <span class="link-label">Email</span>
+                            <span class="link-text" id="emailDisplay">Contact Me</span>
+                        </a>
                     </div>
                 </div>
-                <form class="contact-form" action="https://formsubmit.co/dev@ttkm.net" method="POST" data-scroll data-scroll-speed="1" id="contactForm" itemprop="potentialAction" itemscope itemtype="https://schema.org/ContactAction">
+                <form class="contact-form" id="contactForm" data-scroll data-scroll-speed="1" itemprop="potentialAction" itemscope itemtype="https://schema.org/ContactAction">
                     <meta itemprop="name" content="Contact Form" />
                     <input type="hidden" name="_subject" value="New portfolio contact message">
                     <input type="hidden" name="_captcha" value="false">
@@ -274,7 +274,6 @@
       "description": "Web development services specializing in immersive digital experiences with React, Three.js, WebGL, and modern web technologies.",
       "priceRange": "Contact for pricing",
       "telephone": "+Contact via Email",
-      "email": "dev@ttkm.net",
       "serviceType": ["Web Development", "Frontend Development", "Web Design", "Interactive Websites"],
       "availableChannel": {
         "@type": "ServiceChannel",
@@ -377,6 +376,100 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.33.3/build/postprocessing.min.js" defer></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const emailLink = document.getElementById('emailLink');
+      const emailDisplay = document.getElementById('emailDisplay');
+      const contactForm = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (emailLink && emailDisplay) {
+        const chars = [100, 101, 118, 64, 116, 116, 107, 109, 46, 110, 101, 116];
+        
+        emailLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          let emailStr = '';
+          for (let i = 0; i < chars.length; i++) {
+            emailStr += String.fromCharCode(chars[i]);
+          }
+          window.location.href = 'mailto:' + emailStr;
+        });
+        
+        const displayCanvas = document.createElement('canvas');
+        displayCanvas.width = 120;
+        displayCanvas.height = 20;
+        displayCanvas.style.display = 'inline-block';
+        displayCanvas.style.margin = '0';
+        displayCanvas.style.padding = '0';
+        displayCanvas.style.verticalAlign = 'middle';
+        
+        emailDisplay.textContent = '';
+        emailDisplay.style.display = 'flex';
+        emailDisplay.style.alignItems = 'center';
+        emailDisplay.style.justifyContent = 'flex-start';
+        emailDisplay.style.padding = '0';
+        emailDisplay.style.margin = '0';
+        emailDisplay.appendChild(displayCanvas);
+        
+        setTimeout(function() {
+          const ctx = displayCanvas.getContext('2d');
+          ctx.font = '14px "Space Grotesk", sans-serif';
+          ctx.fillStyle = '#f0f0f0';
+          ctx.textBaseline = 'middle';
+          
+          let displayText = '';
+          for (let i = 0; i < chars.length; i++) {
+            displayText += String.fromCharCode(chars[i]);
+          }
+          ctx.fillText(displayText, 20, 10);
+        }, 500);
+      }
+      
+      if (contactForm && submitBtn) {
+        submitBtn.addEventListener('click', function() {
+          const part1 = 'd' + 'e' + 'v';
+          const part2 = 't' + 't' + 'k' + 'm';
+          const part3 = 'n' + 'e' + 't';
+          const formSubmitUrl = 'https://formsubmit.co/' + part1 + '@' + part2 + '.' + part3;
+          
+          if (contactForm.checkValidity()) {
+            const formData = new FormData(contactForm);
+            
+            fetch(formSubmitUrl, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'Accept': 'application/json'
+              }
+            })
+            .then(response => {
+              if (response.ok) {
+                const thankYouMessage = document.querySelector('.thank-you-message');
+                if (thankYouMessage) {
+                  thankYouMessage.style.display = 'block';
+                  contactForm.reset();
+                }
+              } else {
+                throw new Error('Form submission failed');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('There was an error submitting your message. Please try again later.');
+            });
+          } else {
+            const submitAttempt = document.createElement('input');
+            submitAttempt.type = 'submit';
+            submitAttempt.style.display = 'none';
+            contactForm.appendChild(submitAttempt);
+            submitAttempt.click();
+            contactForm.removeChild(submitAttempt);
+          }
+        });
+      }
+    });
+    </script>
 </body>
 </html>
 
