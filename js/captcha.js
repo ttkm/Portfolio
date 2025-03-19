@@ -254,38 +254,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     verifyCaptchaBtn.addEventListener('click', function() {
+        const answer = parseInt(captchaAnswer.value);
         const expectedAnswer = parseInt(captchaNum1.textContent) + parseInt(captchaNum2.textContent);
-        const userAnswer = parseInt(captchaAnswer.value);
         
-        if (userAnswer === expectedAnswer) {
+        if (answer === expectedAnswer) {
             hideCaptchaModal();
             
-            btnText.textContent = 'SENDING...';
-            submitBtn.disabled = true;
+            const part1 = 'd' + 'e' + 'v';
+            const part2 = 't' + 't' + 'k' + 'm';
+            const part3 = 'n' + 'e' + 't';
+            contactForm.action = 'https://formsubmit.co/' + part1 + '@' + part2 + '.' + part3;
             
-            const timestamp = new Date().getTime().toString();
-            storeSubmissionTime(timestamp);
-            
+            const now = new Date().getTime();
+            storeSubmissionTime(now);
             sessionStorage.setItem('formSubmitted', 'true');
             
             contactForm.submit();
             
-            setTimeout(() => {
-                Array.from(contactForm.querySelectorAll('.form-group, button')).forEach(el => {
-                    el.style.display = 'none';
-                });
-                thankYouMessage.style.display = 'block';
-            }, 1000);
-        } else {
-            captchaAnswer.classList.add('shake');
-            setTimeout(() => {
-                captchaAnswer.classList.remove('shake');
-            }, 600);
+            Array.from(contactForm.querySelectorAll('.form-group, button')).forEach(el => {
+                el.style.display = 'none';
+            });
+            thankYouMessage.style.display = 'block';
             
+            updateButtonCooldown();
+        } else {
+            captchaAnswer.classList.add('error');
+            captchaAnswer.value = '';
             setTimeout(() => {
-                generateCaptcha();
-                captchaAnswer.focus();
-            }, 600);
+                captchaAnswer.classList.remove('error');
+            }, 800);
+            generateCaptcha();
         }
     });
     

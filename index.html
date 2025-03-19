@@ -170,7 +170,7 @@
                         </a>
                     </div>
                 </div>
-                <form class="contact-form" id="contactForm" data-scroll data-scroll-speed="1" itemprop="potentialAction" itemscope itemtype="https://schema.org/ContactAction">
+                <form class="contact-form" action="#" method="POST" data-scroll data-scroll-speed="1" id="contactForm" itemprop="potentialAction" itemscope itemtype="https://schema.org/ContactAction">
                     <meta itemprop="name" content="Contact Form" />
                     <input type="hidden" name="_subject" value="New portfolio contact message">
                     <input type="hidden" name="_captcha" value="false">
@@ -381,8 +381,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       const emailLink = document.getElementById('emailLink');
       const emailDisplay = document.getElementById('emailDisplay');
-      const contactForm = document.getElementById('contactForm');
-      const submitBtn = document.getElementById('submitBtn');
       
       if (emailLink && emailDisplay) {
         const chars = [100, 101, 118, 64, 116, 116, 107, 109, 46, 110, 101, 116];
@@ -404,6 +402,7 @@
         displayCanvas.style.padding = '0';
         displayCanvas.style.verticalAlign = 'middle';
         
+        // Replace text element with canvas
         emailDisplay.textContent = '';
         emailDisplay.style.display = 'flex';
         emailDisplay.style.alignItems = 'center';
@@ -424,49 +423,6 @@
           }
           ctx.fillText(displayText, 20, 10);
         }, 500);
-      }
-      
-      if (contactForm && submitBtn) {
-        submitBtn.addEventListener('click', function() {
-          const part1 = 'd' + 'e' + 'v';
-          const part2 = 't' + 't' + 'k' + 'm';
-          const part3 = 'n' + 'e' + 't';
-          const formSubmitUrl = 'https://formsubmit.co/' + part1 + '@' + part2 + '.' + part3;
-          
-          if (contactForm.checkValidity()) {
-            const formData = new FormData(contactForm);
-            
-            fetch(formSubmitUrl, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'Accept': 'application/json'
-              }
-            })
-            .then(response => {
-              if (response.ok) {
-                const thankYouMessage = document.querySelector('.thank-you-message');
-                if (thankYouMessage) {
-                  thankYouMessage.style.display = 'block';
-                  contactForm.reset();
-                }
-              } else {
-                throw new Error('Form submission failed');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              alert('There was an error submitting your message. Please try again later.');
-            });
-          } else {
-            const submitAttempt = document.createElement('input');
-            submitAttempt.type = 'submit';
-            submitAttempt.style.display = 'none';
-            contactForm.appendChild(submitAttempt);
-            submitAttempt.click();
-            contactForm.removeChild(submitAttempt);
-          }
-        });
       }
     });
     </script>

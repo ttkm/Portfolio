@@ -618,69 +618,67 @@ section.section.active {
 
 .form-group {
     position: relative;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 2rem;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
+    padding: 0.8rem 0;
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: var(--spacing-sm);
+    outline: none;
     color: var(--color-text);
-    font-size: 1rem;
     font-family: var(--font-body);
-    transition: var(--transition-standard);
-    background-color: rgba(255, 255, 255, 0.02);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    font-size: 1rem;
+    z-index: 1;
+    position: relative;
 }
 
 .form-group textarea {
-    min-height: 150px;
-    resize: vertical;
+    height: 120px;
+    resize: none;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--color-accent);
-    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .form-group label {
     position: absolute;
-    top: var(--spacing-sm);
     left: 0;
-    font-size: 0.9rem;
-    transition: var(--transition-standard);
+    top: 0.8rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
     pointer-events: none;
-    opacity: 0.7;
+    z-index: 0;
 }
 
 .form-group input:focus ~ label,
 .form-group textarea:focus ~ label,
-.form-group input:valid ~ label,
-.form-group textarea:valid ~ label {
-    top: -0.5rem;
-    font-size: 0.8rem;
+.form-group.has-value label,
+.form-group.focused label {
+    top: -15px;
+    font-size: 0.85rem;
     color: var(--color-accent);
-    opacity: 1;
 }
 
 .form-line {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--color-accent);
-    transition: var(--transition-standard);
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
 }
 
 .form-group input:focus ~ .form-line,
 .form-group textarea:focus ~ .form-line {
-    width: 100%;
+    height: 2px;
+    background: var(--color-accent);
 }
 
 .submit-btn {
@@ -1265,7 +1263,6 @@ section.section.active {
         transition: all 0.3s ease;
         pointer-events: none;
         opacity: 0.7;
-        transform: translateY(0);
     }
     
     .form-group input:focus ~ label,
@@ -1276,7 +1273,6 @@ section.section.active {
         font-size: 0.8rem;
         color: var(--color-accent);
         opacity: 1;
-        transform: translateY(0);
     }
     
     .submit-btn {
